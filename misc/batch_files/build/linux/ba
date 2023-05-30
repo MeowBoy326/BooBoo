@@ -1,0 +1,16 @@
+#!/bin/sh
+if uname -a | grep raspberry > /dev/null ; then
+	NPROC=4
+else
+	NPROC=`nproc`
+fi
+CWD=`pwd`
+cd ~/code
+cd tgui6/build
+make -j$NPROC
+cd ../../shim4/build
+make -j$NPROC
+cd ../../BooBoo/build
+rm "BooBoo"
+make -j$NPROC
+cd $CWD

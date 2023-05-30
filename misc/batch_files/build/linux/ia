@@ -1,0 +1,6 @@
+#!/bin/sh
+mkdir ~/code/b
+#cd ~/code/BooBoo/data
+#compress_dir
+#cp ~/code/BooBoo/data.cpa ~/code/BooBoo/build/BooBoo ~/code/BooBoo/docs/3rd_party.html ~/code/b
+cp ~/code/BooBoo/build/BooBoo ~/code/BooBoo/docs/3rd_party.html ~/code/b

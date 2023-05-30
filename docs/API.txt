@@ -1,0 +1,101 @@
+-- Core Functions ------------------------------------------------------------
+
+number
+	define a number
+	e.g. number x
+
+string
+	define a string
+	e.g. string s
+
+vector
+	define a vector
+	e.g. vector x
+
+=
+	assign
+	e.g. = x 1
+
++
+	add
+	e.g. + x 1
+
+-
+	subtract
+	e.g. - x 1
+
+*
+	multiply
+	e.g. * x 2
+
+/
+	divide
+	e.g. / x 2
+
+%
+	integer modulus
+	e.g. % index count
+
+print
+	print a string (like string_format)
+	e.g. print "Hello, I'm % and I like % and %" name like1 like2
+
+reset
+	load a different BooBoo script
+	e.g. reset "next_slide.boo"
+
+exit
+	Exit the app with a return code to the environment
+	e.g. exit 0
+
+return
+	Return a value from a function
+	e.g. return 1
+
+-- String Functions ------------------------------------------------------------
+
+string_format
+	format strings with replacements
+	e.g. string_format dest "I'm % years old" age
+
+string_char_at
+	Get the value of character at index in a string
+	e.g. string_char_at dest str index
+
+string_length
+	Get the length of a string
+	e.g. string_length dest str
+
+string_from_number
+	Turns the ascii value into a one character length string
+	e.g. string_from_number str 97 ; creates "a"
+
+-- Math Functions ------------------------------------------------------------
+
+fmod
+	floating point modulus
+	e.g. fmod x 1.5
+
+sin
+	trigonometry functions
+	e.g. sin dest 3.14159
+
+cos
+	trigonometry functions
+	e.g. cos dest 3.14159
+
+atan2
+	trigonometry functions
+	e.g. atan2 y x
+
+abs
+	absolute value
+	e.g. abs dest value
+
+pow
+	exponentiation
+	e.g. pow x 2
+
+sqrt
+	square root
+	e.g. sqrt x 256
