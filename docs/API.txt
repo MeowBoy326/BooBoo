@@ -98,4 +98,4 @@ pow
 
 sqrt
 	square root
-	e.g. sqrt x 256
+	e.g. sqrt x
