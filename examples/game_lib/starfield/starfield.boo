@@ -41,6 +41,14 @@ vector_add stars v
 ? i num_stars
 jl add_another_star
 
+; cycle the animation so they don't all start in the centre
+= i 0
+:next_cycle
+call run
++ i 1
+? i 120
+jl next_cycle
+
 function run
 {
 	number sz
@@ -146,4 +154,6 @@ function draw
 	+ i 1
 	? i sz
 	jl next_draw
+
+	filled_circle 0 0 0 255 320 180 16 -1
 }
