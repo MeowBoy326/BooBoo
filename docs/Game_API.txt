@@ -194,7 +194,7 @@ vector_insert
 
 vector_get
 	get the value at index in vector
-	e.g. vector_get v index
+	e.g. vector_get v output index
 
 vector_erase
 	remove from a vector
