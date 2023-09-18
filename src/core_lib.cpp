@@ -129,15 +129,14 @@ bool corefunc_add(Program &prg, std::vector<Token> &v)
 	COUNT_ARGS(2)
 
 	Variable &v1 = as_variable(prg, v[0]);
-	double d = as_number(prg, v[1]);
 
 	if (v1.type == Variable::NUMBER) {
+		double d = as_number(prg, v[1]);
 		v1.n += d;
 	}
 	else if (v1.type == Variable::STRING) {
-		char buf[1000];
-		snprintf(buf, 1000, "%g", d);
-		v1.s += buf;
+		std::string s = as_string(prg, v[1]);
+		v1.s += s;
 	}
 	else {
 		throw Error(std::string(__FUNCTION__) + ": " + "Invalid type at " + get_error_info(prg));
