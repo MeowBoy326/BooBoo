@@ -208,7 +208,7 @@ vector_clear
 
 cfg_load
 	load a config file checking for success
-	e.g. cfg_load cfg success "com.b1stable.example"
+	e.g. cfg_load cfg "com.b1stable.example"
 
 cfg_save
 	save a config file
@@ -232,5 +232,5 @@ cfg_set_string
 
 cfg_exists
 	check if a value exists in a config file
-	e.g. cfg_exists cfg "x"
+	e.g. cfg_exists cfg exists "x"
 
