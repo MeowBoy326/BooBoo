@@ -34,6 +34,23 @@ struct CFG_Info {
 	std::map<int, std::map<std::string, Config_Value> > cfgs;
 };
 
+static std::string remove_quotes(std::string s)
+{
+	int start = 0;
+	int count = s.length();
+
+	if (s[0] == '"') {
+		start++;
+		count--;
+	}
+
+	if (s[s.length()-1] == '"') {
+		count--;
+	}
+
+	return s.substr(start, count);
+}
+
 static MML_Info *mml_info(Program &prg)
 {
 	MML_Info *info;
@@ -142,9 +159,9 @@ static std::map<std::string, Config_Value> load_cfg(Program &prg, std::string cf
 
 		Config_Value val;
 		
-		if (name[0] == '"') {
+		if (value.length() > 0 && value[0] == '"') {
 			val.type = Variable::STRING;
-			val.s = value;
+			val.s = remove_quotes(value);
 		}
 		else {
 			val.type = Variable::NUMBER;
