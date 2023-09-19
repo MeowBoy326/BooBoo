@@ -1,27 +1,16 @@
-@PO0 { 0 -100 }
+@S0 = { kick.flac }
+@S1 = { clap.flac }
 
-A t120 o2 @PO0
-A r1
-A r1
-A r2.
-A b16r1
-A r8. @PO0
+A @S0
+A t150
+A o6c16r16c16r8.c16r16c16r16c16r4r16
+A c16r16c16r8.c16r16c16r16c16r16c16r16c16r16
 
-B t120 @TYPE1
-B o8c16r1
-B r4.
-B >b16r8b16r8b16r1
-B b16r16
-B b16r8.b16r2r8.
+B @S1
+B t150
+B r4o6c16r4..c16r4..
+B c16r2r8.
 
-C t120 y16
-C o4d16r16d16e8d8.c16r16c16r16c8>b8
-C a16r16b16a16r16b16r2r8
-C a16r16a16<e8d8.e16r16e16r16c8>b8
-C a16r16a16g16r16a16r2r8
-
-D t120 @TYPE3
-D o5c2>a2
-D e8f16g16r16g16r16e8f16g16r16e16f16g16r16
-D d4.a4.e8f16g16
-D r16g16e8.f16g16r16g16r4..
+C t150
+C o5e16f16g16f16g16a16g16a16b16r4..
+C b16<d16e16r4r16e16f16g16a16g16f16g16r16

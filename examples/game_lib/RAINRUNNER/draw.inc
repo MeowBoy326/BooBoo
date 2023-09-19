@@ -2,7 +2,6 @@ function draw
 {
 	clear 0 0 0
 
-	filled_rectangle 0 128 0 255 0 128 0 255 0 128 0 255 0 128 0 255 0 ground 640 360
 	line 0 255 0 255 0 ground 640 ground 2
 
 	number flip_h
@@ -208,7 +207,7 @@ function draw
 	= text_x 640
 	- text_x 15
 	- text_x text_w
-	font_draw font 0 255 0 255 text text_x 320
+	font_draw font 0 255 0 255 text text_x 305
 
 	? life 0
 	jg dont_draw_flood

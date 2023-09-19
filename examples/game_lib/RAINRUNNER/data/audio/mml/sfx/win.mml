@@ -1,3 +1,1 @@
-@PO0 = { 0 -5 0 5 0 -5 0 5 0 }
-A y16 o3 a32r8a32r32<@PO0a8@PO0
-B @TYPE3 o4 r32r8r32r32@PO0a8@PO0
+A y32 o3 a16r8a16r32<a2

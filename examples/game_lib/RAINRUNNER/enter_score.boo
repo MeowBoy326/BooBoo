@@ -124,7 +124,7 @@ function write_scores name
 function draw
 {
 	string text
-	= text "HIGH SCORES"
+	= text "HIGH SCORE"
 	number tw
 	number th
 	font_width font tw text

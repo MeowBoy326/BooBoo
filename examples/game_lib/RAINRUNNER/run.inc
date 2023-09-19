@@ -76,6 +76,12 @@ function run
 :do_lr
 	include "poll_joystick.inc"
 
+	? joy_back 1
+	jne dont_bail
+	reset "main.boo"
+
+:dont_bail
+
 	; l/r handling
 
 	? life 0
@@ -129,6 +135,7 @@ function run
 	jge no_jump
 	= jumping 1
 	+ jumps 1
+	= angle 0
 	mml_play jump_sfx 1 0
 	+ vy jump_accel
 	? vy jump_accel
