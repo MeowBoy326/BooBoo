@@ -696,6 +696,160 @@ bool mathfunc_sqrt(Program &prg, std::vector<Token> &v)
 	return true;
 }
 
+static bool vectorfunc_add(Program &prg, std::vector<Token> &v)
+{
+	COUNT_ARGS(2)
+
+	Variable &id = as_variable(prg, v[0]);
+
+	Variable var;
+
+	if (v[1].type == Token::NUMBER) {
+		var.type = Variable::NUMBER;
+		var.name = "-constant-";
+		var.n = v[1].n;
+	}
+	else if (v[1].type == Token::SYMBOL) {
+		var = as_variable(prg, v[1]);
+	}
+	else {
+		var.type = Variable::STRING;
+		var.name = "-constant-";
+		var.s = v[1].s;
+	}
+
+	id.v.push_back(var);
+
+	return true;
+}
+
+static bool vectorfunc_size(Program &prg, std::vector<Token> &v)
+{
+	COUNT_ARGS(2)
+
+	Variable &id = as_variable(prg, v[0]);
+	Variable &v1 = as_variable(prg, v[1]);
+
+	if (v1.type == Variable::NUMBER) {
+		v1.n = id.v.size();
+	}
+	else {
+		throw Error(std::string(__FUNCTION__) + ": " + "Invalid type at " + get_error_info(prg));
+	}
+
+	return true;
+}
+
+static bool vectorfunc_set(Program &prg, std::vector<Token> &v)
+{
+	COUNT_ARGS(3)
+
+	Variable &id = as_variable(prg, v[0]);
+	double index = as_number(prg, v[1]);
+	
+	if (index < 0 || index >= id.v.size()) {
+		throw Error(std::string(__FUNCTION__) + ": " + "Invalid index at " + get_error_info(prg));
+	}
+
+	Variable var;
+
+	if (v[2].type == Token::NUMBER) {
+		var.type = Variable::NUMBER;
+		var.name = "-constant-";
+		var.n = v[2].n;
+	}
+	else if (v[2].type == Token::SYMBOL) {
+		var = as_variable(prg, v[2]);
+	}
+	else {
+		var.type = Variable::STRING;
+		var.name = "-constant-";
+		var.s = v[2].s;
+	}
+
+	id.v[index] = var;
+
+	return true;
+}
+
+static bool vectorfunc_insert(Program &prg, std::vector<Token> &v)
+{
+	COUNT_ARGS(3)
+
+	Variable &id = as_variable(prg, v[0]);
+	double index = as_number(prg, v[1]);
+
+	if (index < 0 || index > id.v.size()) {
+		throw Error(std::string(__FUNCTION__) + ": " + "Invalid index at " + get_error_info(prg));
+	}
+
+	Variable var;
+
+	if (v[2].type == Token::NUMBER) {
+		var.type = Variable::NUMBER;
+		var.name = "-constant-";
+		var.n = v[2].n;
+	}
+	else if (v[2].type == Token::SYMBOL) {
+		var = as_variable(prg, v[2]);
+	}
+	else {
+		var.type = Variable::STRING;
+		var.name = "-constant-";
+		var.s = v[2].s;
+	}
+
+	id.v.insert(id.v.begin()+index, var);
+
+	return true;
+}
+
+static bool vectorfunc_get(Program &prg, std::vector<Token> &v)
+{
+	COUNT_ARGS(3)
+
+	Variable &id = as_variable(prg, v[0]);
+	Variable &v1 = as_variable(prg, v[1]);
+	double index = as_number(prg, v[2]);
+
+	if (index < 0 || index >= id.v.size()) {
+		throw Error(std::string(__FUNCTION__) + ": " + "Invalid index at " + get_error_info(prg));
+	}
+
+	std::string bak = v1.name;
+	v1 = id.v[index];
+	v1.name = bak;
+
+	return true;
+}
+
+static bool vectorfunc_erase(Program &prg, std::vector<Token> &v)
+{
+	COUNT_ARGS(2)
+
+	Variable &id = as_variable(prg, v[0]);
+	double index = as_number(prg, v[1]);
+
+	if (index < 0 || index >= id.v.size()) {
+		throw Error(std::string(__FUNCTION__) + ": " + "Invalid index at " + get_error_info(prg));
+	}
+
+	id.v.erase(id.v.begin() + int(index));
+
+	return true;
+}
+
+static bool vectorfunc_clear(Program &prg, std::vector<Token> &v)
+{
+	COUNT_ARGS(1)
+
+	Variable &id = as_variable(prg, v[0]);
+
+	id.v.clear();
+
+	return true;
+}
+
 void start_lib_core()
 {
 	add_syntax("reset", breaker_reset);
@@ -735,6 +889,13 @@ void start_lib_core()
 	add_syntax("abs", mathfunc_abs);
 	add_syntax("pow", mathfunc_pow);
 	add_syntax("sqrt", mathfunc_sqrt);
+	add_syntax("vector_add", vectorfunc_add);
+	add_syntax("vector_size", vectorfunc_size);
+	add_syntax("vector_set", vectorfunc_set);
+	add_syntax("vector_insert", vectorfunc_insert);
+	add_syntax("vector_get", vectorfunc_get);
+	add_syntax("vector_erase", vectorfunc_erase);
+	add_syntax("vector_clear", vectorfunc_clear);
 }
 
 } // end namespace booboo
