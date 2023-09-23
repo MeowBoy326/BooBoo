@@ -792,7 +792,7 @@ int main(int argc, char **argv)
 	util::srand((uint32_t)time(NULL));
 
 	//shim::create_depth_buffer = true;
-	shim::font_size = 16;
+	shim::font_size = 24;
 
 	start();
 
