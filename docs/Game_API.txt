@@ -14,6 +14,7 @@ There is a little bit of joystick emulation on the keyboard:
 	LRUD/return are X2/Y2/B
 	LRUD also send DPAD buttons
 	Escape is Back
+	F11 is not mapped on the joystick but toggles fullscreen mode
 
 Some of the demo games will auto-play by an AI if a joystick isn't connected.
 I'll leave it as an exercise if you want to play them with keyboard.
