@@ -460,6 +460,20 @@ function explode x y max_r r g b
 	vector_add explosions e
 }
 
+function zero_padded_string_from_number n
+{
+	string s
+
+	? n 10
+	jl pad
+	string_format s "%" n
+	goto done_pad
+:pad
+	string_format s "0%" n
+:done_pad
+	return s
+}
+
 function draw
 {
 	clear 0 0 0
@@ -662,18 +676,24 @@ function draw
 	* hundredths 100
 	int hundredths
 
+	number minutes
+	= minutes seconds
+	/ minutes 60
+	int minutes
+	number tmp
+	= tmp minutes
+	* tmp 60
+	- seconds tmp
+
+	string ms
+	string ss
+	string hs
+	call_result ms zero_padded_string_from_number minutes
+	call_result ss zero_padded_string_from_number seconds
+	call_result hs zero_padded_string_from_number hundredths
+
 	string time
-
-	? hundredths 10
-	jge no_extra_zero
-
-	string_format time "%.0%" seconds hundredths
-	goto done_format
-
-:no_extra_zero
-	string_format time "%.%" seconds hundredths
-
-:done_format
+	string_format time "%:%.%" ms ss hs
 
 	number tx
 	= tx 639
@@ -696,18 +716,24 @@ function draw
 	* hundredths 100
 	int hundredths
 
+	number minutes
+	= minutes seconds
+	/ minutes 60
+	int minutes
+	number tmp
+	= tmp minutes
+	* tmp 60
+	- seconds tmp
+
+	string ms
+	string ss
+	string hs
+	call_result ms zero_padded_string_from_number minutes
+	call_result ss zero_padded_string_from_number seconds
+	call_result hs zero_padded_string_from_number hundredths
+
 	string time
-
-	? hundredths 10
-	jge no_extra_zero2
-
-	string_format time "%.0%" seconds hundredths
-	goto done_format2
-
-:no_extra_zero2
-	string_format time "%.%" seconds hundredths
-
-:done_format2
+	string_format time "%:%.%" ms ss hs
 
 	number tx
 	= tx 639
