@@ -57,6 +57,15 @@ vector enemies
 vector bullets
 vector explosions
 
+number got_coins_ticks
+= got_coins_ticks 0
+number killed_all_ticks
+= killed_all_ticks 0
+number got_coins
+= got_coins 0
+number killed_all
+= killed_all 0
+
 call start_game
 
 function start_game
@@ -637,17 +646,17 @@ function draw
 
 	; Draw status bar
 
-	filled_rectangle 63 63 116 255 63 63 116 255 63 63 116 255 63 63 116 255 0 0 640 16
+	filled_rectangle 32 32 32 255 32 32 32 255 32 32 32 255 32 32 32 255 0 0 640 16
 
 	; Time
 
 	number seconds
-	= seconds game_ticks
+	= seconds killed_all_ticks
 	/ seconds 60
 	int seconds
 
 	number hundredths
-	= hundredths game_ticks
+	= hundredths killed_all_ticks
 	/ hundredths 60
 	- hundredths seconds
 	* hundredths 100
@@ -673,7 +682,43 @@ function draw
 	font_width small_font w time
 	- tx w
 
-	font_draw small_font 255 255 255 255 time tx 1
+	font_draw small_font 223 113 38 255 time tx 1
+
+	number seconds
+	= seconds got_coins_ticks
+	/ seconds 60
+	int seconds
+
+	number hundredths
+	= hundredths got_coins_ticks
+	/ hundredths 60
+	- hundredths seconds
+	* hundredths 100
+	int hundredths
+
+	string time
+
+	? hundredths 10
+	jge no_extra_zero2
+
+	string_format time "%.0%" seconds hundredths
+	goto done_format2
+
+:no_extra_zero2
+	string_format time "%.%" seconds hundredths
+
+:done_format2
+
+	number tx
+	= tx 639
+	- tx 16
+	number w2
+	font_width small_font w2 time
+	- tx w
+	- tx w2
+	- tx 16
+
+	font_draw small_font 251 242 54 255 time tx 1
 
 	; Coins
 
@@ -698,6 +743,16 @@ function run
 	+ ticks 1
 	+ next_fire_ticks 1
 
+	? got_coins 1
+	je check_killed_all
+	+ got_coins_ticks 1
+
+:check_killed_all
+	? killed_all 1
+	je after_killed_all_check
+	+ killed_all_ticks 1
+
+:after_killed_all_check
 	? dead 0
 	je no_tick
 	+ dead_time 1
@@ -856,6 +911,9 @@ function run
 	vector_set coins i tmp
 	mml_play coin_sfx 1 0
 	+ collected 1
+	? collected 7
+	jl not_a_hit
+	= got_coins 1
 :not_a_hit
 	+ i 1
 	? i num_coins
@@ -1041,8 +1099,33 @@ function run
 
 :no_bullets2
 
+	; Check if all enemies are dead
+	number num_enemies
+	vector_size enemies num_enemies
+	number all_dead
+	= all_dead 1
+	number i
+	= i 0
+:check_if_next_enemy_is_dead
+	vector e
+	vector_get enemies e i
+	number exists
+	vector_get e exists 2
+	? exists 1
+	jne its_dead
+	= all_dead 0
+:its_dead
+	+ i 1
+	? i num_enemies
+	jl check_if_next_enemy_is_dead
+
+	? all_dead 1
+	jne update_explosions
+	= killed_all 1
+
 	; Update explosions
 
+:update_explosions
 	number ne
 	vector_size explosions ne
 	? ne 0
