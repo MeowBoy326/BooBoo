@@ -1,6 +1,5 @@
 #!/bin/sh
 mkdir ~/code/b
-#cd ~/code/BooBoo/data
-#compress_dir
-#cp ~/code/BooBoo/data.cpa ~/code/BooBoo/build/BooBoo ~/code/BooBoo/docs/3rd_party.html ~/code/b
-cp ~/code/BooBoo/build/BooBoo ~/code/BooBoo/docs/3rd_party.html ~/code/b
+cp ~/code/BooBoo/build/BooBoo ~/code/BooBoo/build/BooBooGame ~/code/BooBoo/docs/3rd_party.html ~/code/BooBoo/docs/API.txt ~/code/BooBoo/docs/Game_API.txt ~/code/b
+cp -a ~/code/BooBoo/data ~/code/b
+cp -a ~/code/BooBoo/examples ~/code/b

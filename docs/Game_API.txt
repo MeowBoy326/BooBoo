@@ -7,7 +7,7 @@ end - called when the program is exiting
 At startup, global code is run. Then the above mentioned callbacks get called
 at intervals or shutdown.
 
-The screen is 640x360.
+The screen is 640x360 by default, stretch to the window size appropriately.
 
 There is a little bit of joystick emulation on the keyboard:
 	WASD/space is X1/Y1/A
@@ -56,6 +56,10 @@ clear
 flip
 	flip the backbuffer to the screen
 	e.g. flip
+
+resize
+	resize the drawing area projection
+	e.g. resize 240 160
 
 -- Primitive Functions -------------------------------------------------------
 

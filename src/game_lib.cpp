@@ -269,6 +269,18 @@ static bool gfxfunc_flip(Program &prg, std::vector<Token> &v)
 	return true;
 }
 
+static bool gfxfunc_resize(Program &prg, std::vector<Token> &v)
+{
+	COUNT_ARGS(2)
+	
+	int w = as_number(prg, v[0]);
+	int h = as_number(prg, v[1]);
+
+	gfx::restart(w, h, false, shim::real_screen_size.w, shim::real_screen_size.h);
+
+	return true;
+}
+
 static bool primfunc_start_primitives(Program &prg, std::vector<Token> &v)
 {
 	COUNT_ARGS(0)
@@ -1397,6 +1409,7 @@ void start_lib_game()
 	add_syntax("rand", miscfunc_rand);
 	add_syntax("clear", gfxfunc_clear);
 	add_syntax("flip", gfxfunc_flip);
+	add_syntax("resize", gfxfunc_resize);
 	add_syntax("start_primitives", primfunc_start_primitives);
 	add_syntax("end_primitives", primfunc_end_primitives);
 	add_syntax("line", primfunc_line);
