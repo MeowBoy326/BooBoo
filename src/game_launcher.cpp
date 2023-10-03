@@ -319,8 +319,8 @@ void init_lua()
 bool start()
 {
 	// This is basically 16:9 only, with a tiny bit of leeway
-	gfx::set_min_aspect_ratio(1.777f);
-	gfx::set_max_aspect_ratio(1.777f);
+	gfx::set_min_aspect_ratio(1.776f);
+	gfx::set_max_aspect_ratio(1.778f);
 
 	if (util::bool_arg(false, shim::argc, shim::argv, "logging")) {
 		shim::logging = true;

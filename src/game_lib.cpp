@@ -276,6 +276,9 @@ static bool gfxfunc_resize(Program &prg, std::vector<Token> &v)
 	int w = as_number(prg, v[0]);
 	int h = as_number(prg, v[1]);
 
+	float aspect = (float)w/h;
+	gfx::set_min_aspect_ratio(aspect-0.001f);
+	gfx::set_max_aspect_ratio(aspect+0.001f);
 	gfx::restart(w, h, false, shim::real_screen_size.w, shim::real_screen_size.h);
 
 	return true;
