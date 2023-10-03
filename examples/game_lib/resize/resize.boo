@@ -1,7 +1,7 @@
 number img
-image_load img "misc/tth.tga"
+image_load img "misc/kingalbert.tga"
 
-resize 240 135
+resize 240 160
 
 function draw
 {
