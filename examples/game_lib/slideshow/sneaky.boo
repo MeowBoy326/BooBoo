@@ -15,9 +15,9 @@ font_load f "font.ttf" size 0
 
 vector_add fonts f
 
-+ size 8
++ size 6
 
-? size 64
+? size 50
 jle font_loads
 
 number half_x
