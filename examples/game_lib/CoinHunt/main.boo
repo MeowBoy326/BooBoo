@@ -70,9 +70,9 @@ number total_ticks
 number total_time
 
 number NUM_COINS
-= NUM_COINS 1
+= NUM_COINS 7
 number NUM_ENEMIES
-= NUM_ENEMIES 1
+= NUM_ENEMIES 32
 
 call start_game
 
