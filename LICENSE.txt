@@ -94,4 +94,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 --
 
-A lot of love font is Copyright weknow.
+A lot of love font is Copyright weknow
+
+--
+
+Crystal font Copyright Jerry Fitzpatrick
