@@ -14,6 +14,8 @@ number shoot_sfx
 mml_load shoot_sfx "sfx/shoot.mml"
 number shot_coin_sfx
 mml_load shot_coin_sfx "sfx/shot_coin.mml"
+number count_sfx
+mml_create count_sfx "A a32"
 number small_font
 number big_font
 font_load small_font "font.ttf" 12 1
@@ -28,9 +30,6 @@ number ship_vel
 number dead
 number dead_time
 number collected
-
-number num_coins
-= num_coins 7
 
 number screens
 = screens 4
@@ -65,6 +64,15 @@ number got_coins
 = got_coins 0
 number killed_all
 = killed_all 0
+number won
+= won 0
+number total_ticks
+number total_time
+
+number NUM_COINS
+= NUM_COINS 1
+number NUM_ENEMIES
+= NUM_ENEMIES 1
 
 call start_game
 
@@ -168,7 +176,7 @@ function start_coins
 	vector_add coin 1
 	vector_add coins coin
 	+ i 1
-	? i num_coins
+	? i NUM_COINS
 	jl another_coin
 }
 
@@ -223,7 +231,7 @@ function start_enemies
 	vector_add tmp next_y
 	vector_add enemies tmp
 	+ i 1
-	? i 32
+	? i NUM_ENEMIES
 	jl add_another_enemy
 }
 
@@ -401,7 +409,7 @@ function bullet_collide bx by
 	return 1
 :skip_it
 	+ i 1
-	? i num_coins
+	? i NUM_COINS
 	jl next_coin
 
 	; Check enemies
@@ -474,6 +482,135 @@ function zero_padded_string_from_number n
 	return s
 }
 
+function draw_time_playing
+{
+	; Time
+
+	number seconds
+	= seconds killed_all_ticks
+	/ seconds 60
+	int seconds
+
+	number hundredths
+	= hundredths killed_all_ticks
+	/ hundredths 60
+	- hundredths seconds
+	* hundredths 100
+	int hundredths
+
+	number minutes
+	= minutes seconds
+	/ minutes 60
+	int minutes
+	number tmp
+	= tmp minutes
+	* tmp 60
+	- seconds tmp
+
+	string ms
+	string ss
+	string hs
+	call_result ms zero_padded_string_from_number minutes
+	call_result ss zero_padded_string_from_number seconds
+	call_result hs zero_padded_string_from_number hundredths
+
+	string time
+	string_format time "%:%.%" ms ss hs
+
+	number tx
+	= tx 639
+	- tx 16
+	number w
+	font_width small_font w time
+	- tx w
+
+	font_draw small_font 223 113 38 255 time tx 1
+
+	number seconds
+	= seconds got_coins_ticks
+	/ seconds 60
+	int seconds
+
+	number hundredths
+	= hundredths got_coins_ticks
+	/ hundredths 60
+	- hundredths seconds
+	* hundredths 100
+	int hundredths
+
+	number minutes
+	= minutes seconds
+	/ minutes 60
+	int minutes
+	number tmp
+	= tmp minutes
+	* tmp 60
+	- seconds tmp
+
+	string ms
+	string ss
+	string hs
+	call_result ms zero_padded_string_from_number minutes
+	call_result ss zero_padded_string_from_number seconds
+	call_result hs zero_padded_string_from_number hundredths
+
+	string time
+	string_format time "%:%.%" ms ss hs
+
+	number tx
+	= tx 639
+	- tx 16
+	number w2
+	font_width small_font w2 time
+	- tx w
+	- tx w2
+	- tx 16
+
+	font_draw small_font 251 242 54 255 time tx 1
+}
+
+function draw_time_won
+{
+	number tmp
+	number tmp2
+	= tmp2 killed_all_ticks
+	number remain
+	= tmp got_coins_ticks
+	- tmp total_time
+	? tmp 0
+	jge still_counting_coins_time
+	= remain tmp
+	neg remain
+	= tmp 0
+
+	- tmp2 remain
+
+:still_counting_coins_time
+
+	number bak1
+	number bak2
+	= bak1 got_coins_ticks
+	= bak2 killed_all_ticks
+	= got_coins_ticks tmp
+	= killed_all_ticks tmp2
+
+	call draw_time_playing
+
+	= got_coins_ticks bak1
+	= killed_all_ticks bak2
+}
+
+function draw_time
+{
+	? won 1
+	jne no_win_draw
+	call draw_time_won
+	goto draw_time_end
+:no_win_draw
+	call draw_time_playing
+:draw_time_end
+}
+
 function draw
 {
 	clear 0 0 0
@@ -542,7 +679,7 @@ function draw
 	image_draw_rotated_scaled coin_img 255 255 255 255 16 16 coin_x coin_y 0 coin_x_scale 1 0 0
 :skip_coin
 	+ i 1
-	? i num_coins
+	? i NUM_COINS
 	jl draw_next_coin
 
 	; Draw enemies
@@ -662,90 +799,7 @@ function draw
 
 	filled_rectangle 32 32 32 255 32 32 32 255 32 32 32 255 32 32 32 255 0 0 640 16
 
-	; Time
-
-	number seconds
-	= seconds killed_all_ticks
-	/ seconds 60
-	int seconds
-
-	number hundredths
-	= hundredths killed_all_ticks
-	/ hundredths 60
-	- hundredths seconds
-	* hundredths 100
-	int hundredths
-
-	number minutes
-	= minutes seconds
-	/ minutes 60
-	int minutes
-	number tmp
-	= tmp minutes
-	* tmp 60
-	- seconds tmp
-
-	string ms
-	string ss
-	string hs
-	call_result ms zero_padded_string_from_number minutes
-	call_result ss zero_padded_string_from_number seconds
-	call_result hs zero_padded_string_from_number hundredths
-
-	string time
-	string_format time "%:%.%" ms ss hs
-
-	number tx
-	= tx 639
-	- tx 16
-	number w
-	font_width small_font w time
-	- tx w
-
-	font_draw small_font 223 113 38 255 time tx 1
-
-	number seconds
-	= seconds got_coins_ticks
-	/ seconds 60
-	int seconds
-
-	number hundredths
-	= hundredths got_coins_ticks
-	/ hundredths 60
-	- hundredths seconds
-	* hundredths 100
-	int hundredths
-
-	number minutes
-	= minutes seconds
-	/ minutes 60
-	int minutes
-	number tmp
-	= tmp minutes
-	* tmp 60
-	- seconds tmp
-
-	string ms
-	string ss
-	string hs
-	call_result ms zero_padded_string_from_number minutes
-	call_result ss zero_padded_string_from_number seconds
-	call_result hs zero_padded_string_from_number hundredths
-
-	string time
-	string_format time "%:%.%" ms ss hs
-
-	number tx
-	= tx 639
-	- tx 16
-	number w2
-	font_width small_font w2 time
-	- tx w
-	- tx w2
-	- tx 16
-
-	font_draw small_font 251 242 54 255 time tx 1
-
+	call draw_time
 	; Coins
 
 	? collected 0
@@ -762,10 +816,93 @@ function draw
 	jg draw_next_coin_icon
 
 :after_draw_coin_icons
+
+	; Draw total time if won
+	? won 0
+	je done_draw
+
+	filled_rectangle 16 16 16 128 16 16 16 128 16 16 16 128 16 16 16 128 0 140 640 80
+
+	number seconds
+	= seconds total_time
+	/ seconds 60
+	int seconds
+
+	number hundredths
+	= hundredths total_time
+	/ hundredths 60
+	- hundredths seconds
+	* hundredths 100
+	int hundredths
+
+	number minutes
+	= minutes seconds
+	/ minutes 60
+	int minutes
+	number tmp
+	= tmp minutes
+	* tmp 60
+	- seconds tmp
+
+	string ms
+	string ss
+	string hs
+	call_result ms zero_padded_string_from_number minutes
+	call_result ss zero_padded_string_from_number seconds
+	call_result hs zero_padded_string_from_number hundredths
+
+	string time
+	string_format time "%:%.%" ms ss hs
+
+	number tx
+	= tx 320
+	number w
+	font_width big_font w time
+	/ w 2
+	- tx w
+	number ty
+	= ty 180
+	number h
+	font_height big_font h
+	/ h 2
+	- ty h
+
+	font_draw big_font 255 255 255 255 time tx ty
+
+:done_draw
 }
 
 function run
 {
+	? killed_all 1
+	jne no_win
+	? got_coins 1
+	jne no_win
+	? won 0
+	jne no_win
+	= won 1
+	= total_time 0
+	= total_ticks got_coins_ticks
+	+ total_ticks killed_all_ticks
+
+:no_win
+
+	? won 1
+	jne dont_count_score
+	
+	number i
+	= i 0
+:next_score_count
+	? total_ticks 0
+	jle dont_count_score
+	+ total_time 1
+	- total_ticks 1
+	mml_play count_sfx 1 0
+	+ i 1
+	? i 60
+	jl next_score_count
+
+:dont_count_score
 	+ ticks 1
 	+ next_fire_ticks 1
 
@@ -937,12 +1074,12 @@ function run
 	vector_set coins i tmp
 	mml_play coin_sfx 1 0
 	+ collected 1
-	? collected 7
+	? collected NUM_COINS
 	jl not_a_hit
 	= got_coins 1
 :not_a_hit
 	+ i 1
-	? i num_coins
+	? i NUM_COINS
 	jl check_next_coin
 
 	; Check for player-enemy collisions
