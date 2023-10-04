@@ -961,7 +961,7 @@ fclose(foo);
 
 	compile(prg, PASS2);
 
-	for (size_t i = 0; i < prg.variables.size()-1; i++) {
+	for (int i = 0; i < int(prg.variables.size())-1; i++) {
 		if (prg.variables[i].type != Variable::LABEL) {
 			continue;
 		}
