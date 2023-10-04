@@ -87,6 +87,8 @@ function start_game
 	vector_clear explosions
 
 	= game_ticks 0
+	= got_coins_ticks 0
+	= killed_all_ticks 0
 }
 
 function start_player
