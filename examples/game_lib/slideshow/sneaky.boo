@@ -3,7 +3,7 @@ string reset_game_name
 include "slideshow_start.inc"
 
 number size
-= size 8
+= size 6
 
 vector fonts
 
@@ -11,13 +11,13 @@ vector fonts
 
 number f
 
-font_load f "font.ttf" size 0
+font_load f "font.ttf" size 1
 
 vector_add fonts f
 
 + size 6
 
-? size 50
+? size 48
 jle font_loads
 
 number half_x

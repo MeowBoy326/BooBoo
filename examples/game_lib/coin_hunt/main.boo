@@ -1,11 +1,11 @@
 number ship_img
-image_load ship_img "misc/ship.png"
+image_load ship_img "misc/ship.tga"
 number enemy_img
-image_load enemy_img "misc/enemy.png"
+image_load enemy_img "misc/enemy.tga"
 number coin_img
-image_load coin_img "misc/coin.png"
+image_load coin_img "misc/coin.tga"
 number bullet_img
-image_load bullet_img "misc/bullet.png"
+image_load bullet_img "misc/bullet.tga"
 number coin_sfx
 mml_load coin_sfx "sfx/coin.mml"
 number hit_sfx
@@ -16,8 +16,8 @@ number shot_coin_sfx
 mml_load shot_coin_sfx "sfx/shot_coin.mml"
 number small_font
 number big_font
-font_load small_font "font.ttf" 16 1
-font_load big_font "font.ttf" 48 1
+font_load small_font "font.ttf" 12 1
+font_load big_font "font.ttf" 36 1
 
 number pos_x
 number pos_y
