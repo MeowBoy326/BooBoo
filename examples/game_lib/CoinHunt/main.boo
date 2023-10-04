@@ -901,7 +901,7 @@ function run
 	- total_ticks 1
 	mml_play count_sfx 1 0
 	+ i 1
-	? i 60
+	? i 20
 	jl next_score_count
 
 :dont_count_score
