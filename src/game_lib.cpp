@@ -877,7 +877,7 @@ static bool fontfunc_load(Program &prg, std::vector<Token> &v)
 		throw Error(std::string(__FUNCTION__) + ": " + "Invalid type at " + get_error_info(prg));
 	}
 
-	gfx::TTF *font = new gfx::TTF(name, size, 256);
+	gfx::TTF *font = new gfx::TTF(name, size, 1024);
 	font->set_smooth(smooth);
 
 	info->fonts[info->font_id++] = font;
