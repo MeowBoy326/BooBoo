@@ -124,9 +124,11 @@ image_draw_rotated_scaled
 
 image_start
 	start a batch of images for speed (must be same image)
+	e.g. image_start img
 
 image_end
 	end a batch of images
+	e.g. image_end img
 
 image_size
 	get image width/height
