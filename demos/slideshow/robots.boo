@@ -38,10 +38,10 @@ number robot_img
 number dog_img
 number fire_img
 number grass_img
-image_load robot_img "misc/robot.tga"
-image_load dog_img "misc/dog.tga"
-image_load fire_img "misc/explosion.tga"
-image_load grass_img "misc/grass.tga"
+image_load robot_img "misc/robot.png"
+image_load dog_img "misc/dog.png"
+image_load fire_img "misc/explosion.png"
+image_load grass_img "misc/grass.png"
 
 vector board
 call start_board

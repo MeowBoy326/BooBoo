@@ -1,11 +1,11 @@
 number ship_img
-image_load ship_img "misc/ship.tga"
+image_load ship_img "misc/ship.png"
 number enemy_img
-image_load enemy_img "misc/enemy.tga"
+image_load enemy_img "misc/enemy.png"
 number coin_img
-image_load coin_img "misc/coin.tga"
+image_load coin_img "misc/coin.png"
 number bullet_img
-image_load bullet_img "misc/bullet.tga"
+image_load bullet_img "misc/bullet.png"
 number coin_sfx
 mml_load coin_sfx "sfx/coin.mml"
 number hit_sfx
@@ -647,8 +647,6 @@ function draw
 	
 	number coin_x_scale
 
-	image_start coin_img
-
 	number tmp
 	= tmp ticks
 	% tmp 10
@@ -688,11 +686,7 @@ function draw
 	? i NUM_COINS
 	jl draw_next_coin
 
-	image_end coin_img
-
 	; Draw enemies
-
-	image_start enemy_img
 
 	number e_angle
 	= e_angle ticks
@@ -729,11 +723,7 @@ function draw
 	? i num_enemies
 	jl draw_next_enemy
 
-	image_end enemy_img
-
 	; Draw bullets
-
-	image_start bullet_img
 
 	number num_bullets
 	vector_size bullets num_bullets
@@ -758,8 +748,6 @@ function draw
 
 :no_bullets
 
-	image_end bullet_img
-
 	; Draw player
 
 	? dead 1
@@ -779,8 +767,6 @@ function draw
 :skip_draw_player
 	
 	; Draw explosions
-
-	start_primitives
 
 	number ne
 	vector_size explosions ne
@@ -813,17 +799,12 @@ function draw
 
 :no_explosions2
 
-	end_primitives
-
 	; Draw status bar
 
 	filled_rectangle 32 32 32 255 32 32 32 255 32 32 32 255 32 32 32 255 0 0 640 16
 
 	call draw_time
-
 	; Coins
-
-	image_start coin_img
 
 	? collected 0
 	je after_draw_coin_icons
@@ -839,8 +820,6 @@ function draw
 	jg draw_next_coin_icon
 
 :after_draw_coin_icons
-
-	image_end coin_img
 
 	; Draw total time if won
 	? won 0

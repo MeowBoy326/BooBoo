@@ -23,11 +23,11 @@ cfg_get_number cfg scale "scale"
 
 vector anim
 number img
-image_load img "misc/walk1.tga"
+image_load img "misc/walk1.png"
 vector_add anim img
-image_load img "misc/walk2.tga"
+image_load img "misc/walk2.png"
 vector_add anim img
-image_load img "misc/walk3.tga"
+image_load img "misc/walk3.png"
 vector_add anim img
 number frame
 = frame 0

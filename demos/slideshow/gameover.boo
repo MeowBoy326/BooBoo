@@ -9,8 +9,8 @@ mml_play music 1.0 1
 number guy
 number glasses
 
-image_load guy "misc/guy.tga"
-image_load glasses "misc/glasses.tga"
+image_load guy "misc/guy.png"
+image_load glasses "misc/glasses.png"
 
 number y
 = y 0

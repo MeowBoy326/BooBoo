@@ -11,34 +11,34 @@ number jump_img
 number run1_img
 number run2_img
 number umbrella_img
-image_load drop_img "game_gfx/drop.tga"
-image_load idle_img "game_gfx/idle.tga"
-image_load jump_img "game_gfx/jump.tga"
-image_load run1_img "game_gfx/run1.tga"
-image_load run2_img "game_gfx/run2.tga"
-image_load umbrella_img "game_gfx/umbrella.tga"
+image_load drop_img "game_gfx/drop.png"
+image_load idle_img "game_gfx/idle.png"
+image_load jump_img "game_gfx/jump.png"
+image_load run1_img "game_gfx/run1.png"
+image_load run2_img "game_gfx/run2.png"
+image_load umbrella_img "game_gfx/umbrella.png"
 
 vector numeral_imgs ; I really should have named these 0-9...
 number img
-image_load img "game_gfx/i.tga"
+image_load img "game_gfx/i.png"
 vector_add numeral_imgs img
-image_load img "game_gfx/ii.tga"
+image_load img "game_gfx/ii.png"
 vector_add numeral_imgs img
-image_load img "game_gfx/iii.tga"
+image_load img "game_gfx/iii.png"
 vector_add numeral_imgs img
-image_load img "game_gfx/iv.tga"
+image_load img "game_gfx/iv.png"
 vector_add numeral_imgs img
-image_load img "game_gfx/v.tga"
+image_load img "game_gfx/v.png"
 vector_add numeral_imgs img
-image_load img "game_gfx/vi.tga"
+image_load img "game_gfx/vi.png"
 vector_add numeral_imgs img
-image_load img "game_gfx/vii.tga"
+image_load img "game_gfx/vii.png"
 vector_add numeral_imgs img
-image_load img "game_gfx/viii.tga"
+image_load img "game_gfx/viii.png"
 vector_add numeral_imgs img
-image_load img "game_gfx/ix.tga"
+image_load img "game_gfx/ix.png"
 vector_add numeral_imgs img
-image_load img "game_gfx/x.tga"
+image_load img "game_gfx/x.png"
 vector_add numeral_imgs img
 
 number font
