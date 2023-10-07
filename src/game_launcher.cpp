@@ -13,6 +13,8 @@
 #include <unistd.h>
 #endif
 
+#include <sys/stat.h>
+
 #ifdef CPP_BENCH
 gfx::Image *grass;
 gfx::Image *robot;
@@ -727,21 +729,28 @@ int main(int argc, char **argv)
 	}
 
 	if (fn != "") {
-		int pos = fn.length()-1;
-#ifdef _WIN32
-		while (pos > 0 && (fn[pos] != '/' && fn[pos] != '\\')) {
-#else
-		while (pos > 0 && fn[pos] != '/') {
-#endif
-			pos--;
+		struct stat s;
+		if (stat(fn.c_str(), &s) == 0 && (s.st_mode & S_IFMT) == S_IFDIR) {
+			chdir(fn.c_str());
+			fn = "";
 		}
+		else {
+			int pos = fn.length()-1;
 #ifdef _WIN32
-		if (fn[pos] == '/' || fn[pos] == '\\') {
+			while (pos > 0 && (fn[pos] != '/' && fn[pos] != '\\')) {
 #else
-		if (fn[pos] == '/') {
+			while (pos > 0 && fn[pos] != '/') {
 #endif
-			chdir(fn.substr(0, pos).c_str());
-			fn = fn.substr(pos+1);
+				pos--;
+			}
+#ifdef _WIN32
+			if (fn[pos] == '/' || fn[pos] == '\\') {
+#else
+			if (fn[pos] == '/') {
+#endif
+				chdir(fn.substr(0, pos).c_str());
+				fn = fn.substr(pos+1);
+			}
 		}
 	}
 
