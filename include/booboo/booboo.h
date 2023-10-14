@@ -147,8 +147,11 @@ std::string as_string(Program &prg, Token &t);
 int as_label(Program &prg, Token &t);
 int as_function(Program &prg, Token &t);
 
-// Without calling this or adding your own, the language has no syntax
+// This adds only the core syntax (6 library functions and a few extra keywords)
 void start_lib_core();
+
+// This one adds basic syntax like arithmetic and vector manipulation
+void start_lib_basics();
 
 } // End namespace booboo
 

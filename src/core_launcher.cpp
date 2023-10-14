@@ -1,3 +1,7 @@
+#ifdef __linux__
+#include <unistd.h>
+#endif
+
 #include <sys/stat.h>
 
 #include "booboo/booboo.h"
@@ -73,6 +77,7 @@ int main(int argc, char **argv)
 
 	booboo::start();
 	booboo::start_lib_core();
+	booboo::start_lib_basics();
 
 again:
 	booboo::quit = false;

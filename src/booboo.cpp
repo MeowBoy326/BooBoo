@@ -834,16 +834,6 @@ void call_void_function(Program &prg, std::string function_name, std::vector<Tok
 	call_function(prg, function_name, params, tmp, ignore_params);
 }
 
-static std::string method_name(int method)
-{
-	for (std::map<std::string, int>::iterator it = library_map.begin(); it != library_map.end(); it++) {
-		if ((*it).second == method) {
-			return (*it).first;
-		}
-	}
-	return "";
-}
-
 bool interpret(Program &prg)
 {
 	bool ret = true;

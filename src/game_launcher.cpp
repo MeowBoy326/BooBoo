@@ -812,6 +812,7 @@ int main(int argc, char **argv)
 
 	booboo::start();
 	booboo::start_lib_core();
+	booboo::start_lib_basics();
 	start_lib_game();
 
 again:
