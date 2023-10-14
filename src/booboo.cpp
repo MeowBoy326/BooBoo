@@ -7,8 +7,6 @@
 
 namespace booboo {
 
-typedef std::string (*token_func)(Program &);
-
 std::map<std::string, int> library_map;
 std::vector<library_func> library;
 std::map<char, token_func> token_map;
@@ -223,66 +221,10 @@ std::string get_error_info(Program &prg)
 	return get_file_name(prg) + ":" + itos(get_line_num(prg));
 }
 
-static std::string tokenfunc_add(booboo::Program &prg)
-{
-	prg.s->p++;
-	return "+";
-}
-
-static std::string tokenfunc_subtract(booboo::Program &prg)
-{
-	char s[2];
-	s[1] = 0;
-
-	prg.s->p++;
-	if (prg.s->p < prg.s->code.length() && isdigit(prg.s->code[prg.s->p])) {
-		std::string tok = "-";
-		while (prg.s->p < prg.s->code.length() && (isdigit(prg.s->code[prg.s->p]) || prg.s->code[prg.s->p] == '.')) {
-			s[0] = prg.s->code[prg.s->p];
-			tok += s;
-			prg.s->p++;
-		}
-		return tok;
-	}
-	else {
-		return "-";
-	}
-}
-
-static std::string tokenfunc_equals(booboo::Program &prg)
-{
-	prg.s->p++;
-	return "=";
-}
-
-static std::string tokenfunc_compare(booboo::Program &prg)
-{
-	prg.s->p++;
-	return "?";
-}
-
-static std::string tokenfunc_multiply(booboo::Program &prg)
-{
-	prg.s->p++;
-	return "*";
-}
-
-static std::string tokenfunc_divide(booboo::Program &prg)
-{
-	prg.s->p++;
-	return "/";
-}
-
 static std::string tokenfunc_label(booboo::Program &prg)
 {
 	prg.s->p++;
 	return ":";
-}
-
-static std::string tokenfunc_modulus(booboo::Program &prg)
-{
-	prg.s->p++;
-	return "%";
 }
 
 static std::string tokenfunc_string(booboo::Program &prg)
@@ -874,20 +816,18 @@ void add_syntax(std::string name, library_func processing)
 	library.push_back(processing);
 }
 
+void add_token(char token, token_func func)
+{
+	token_map[token] = func;
+}
+
 static void init_token_map()
 {
-	token_map['+'] = tokenfunc_add;
-	token_map['-'] = tokenfunc_subtract;
-	token_map['='] = tokenfunc_equals;
-	token_map['?'] = tokenfunc_compare;
-	token_map['*'] = tokenfunc_multiply;
-	token_map['/'] = tokenfunc_divide;
-	token_map[':'] = tokenfunc_label;
-	token_map['%'] = tokenfunc_modulus;
-	token_map['"'] = tokenfunc_string;
-	token_map['{'] = tokenfunc_openbrace;
-	token_map['}'] = tokenfunc_closebrace;
-	token_map[';'] = tokenfunc_comment;
+	add_token(':', tokenfunc_label);
+	add_token('"', tokenfunc_string);
+	add_token('{', tokenfunc_openbrace);
+	add_token('}', tokenfunc_closebrace);
+	add_token(';', tokenfunc_comment);
 }
 
 void start()

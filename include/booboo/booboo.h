@@ -153,6 +153,10 @@ void start_lib_core();
 // This one adds basic syntax like arithmetic and vector manipulation
 void start_lib_basics();
 
+typedef std::string (*token_func)(Program &);
+
+void add_token(char token, token_func func);
+
 } // End namespace booboo
 
 // You can use this at the start of your library functions to ensure correct number of arguments

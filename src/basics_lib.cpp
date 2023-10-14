@@ -795,8 +795,77 @@ static bool vectorfunc_clear(Program &prg, std::vector<Token> &v)
 	return true;
 }
 
+static std::string tokenfunc_add(booboo::Program &prg)
+{
+	prg.s->p++;
+	return "+";
+}
+
+static std::string tokenfunc_subtract(booboo::Program &prg)
+{
+	char s[2];
+	s[1] = 0;
+
+	prg.s->p++;
+	if (prg.s->p < prg.s->code.length() && isdigit(prg.s->code[prg.s->p])) {
+		std::string tok = "-";
+		while (prg.s->p < prg.s->code.length() && (isdigit(prg.s->code[prg.s->p]) || prg.s->code[prg.s->p] == '.')) {
+			s[0] = prg.s->code[prg.s->p];
+			tok += s;
+			prg.s->p++;
+		}
+		return tok;
+	}
+	else {
+		return "-";
+	}
+}
+
+static std::string tokenfunc_equals(booboo::Program &prg)
+{
+	prg.s->p++;
+	return "=";
+}
+
+static std::string tokenfunc_compare(booboo::Program &prg)
+{
+	prg.s->p++;
+	return "?";
+}
+
+static std::string tokenfunc_multiply(booboo::Program &prg)
+{
+	prg.s->p++;
+	return "*";
+}
+
+static std::string tokenfunc_divide(booboo::Program &prg)
+{
+	prg.s->p++;
+	return "/";
+}
+
+static std::string tokenfunc_modulus(booboo::Program &prg)
+{
+	prg.s->p++;
+	return "%";
+}
+
+static void init_token_map()
+{
+	booboo::add_token('+', tokenfunc_add);
+	booboo::add_token('-', tokenfunc_subtract);
+	booboo::add_token('=', tokenfunc_equals);
+	booboo::add_token('?', tokenfunc_compare);
+	booboo::add_token('*', tokenfunc_multiply);
+	booboo::add_token('/', tokenfunc_divide);
+	booboo::add_token('%', tokenfunc_modulus);
+}	
+
 void start_lib_basics()
 {
+	init_token_map();
+
 	add_syntax("int", corefunc_int);
 	add_syntax("=", corefunc_set);
 	add_syntax("+", corefunc_add);
