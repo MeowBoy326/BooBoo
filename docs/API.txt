@@ -1,5 +1,5 @@
 The core functions are the only ones included if you use booboo::start_lib_core(). The rest
-are part of booboo::start_lib_basics().
+are part of booboo::start_lib_basics(). The core lib is non-optional.
 
 -- Core Functions ------------------------------------------------------------
 
