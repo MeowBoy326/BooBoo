@@ -1,5 +1,5 @@
 The Core Functions are the only things available if you don't use
-start_lib_basics or start_lib_core. BooBoo calls start_lib_basics and
+start_lib_basics or start_lib_game. BooBoo calls start_lib_basics and
 BooBooGame calls both, but if you use BooBoo as a library, it's up to
 you.
 
