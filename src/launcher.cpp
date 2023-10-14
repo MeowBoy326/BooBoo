@@ -6,7 +6,7 @@
 
 #include "booboo/booboo.h"
 
-booboo::Program prg;
+booboo::Program *prg;
 
 static std::string load_text_from_filesystem(std::string filename)
 {
@@ -134,8 +134,8 @@ again:
 
 #ifdef DUMP
 	printf("main:\n");
-	for (size_t i = 0; i < prg.program.size(); i++) {
-		booboo::Statement &s = prg.program[i];
+	for (size_t i = 0; i < prg->program.size(); i++) {
+		booboo::Statement &s = prg->program[i];
 		printf("%d ", s.method);
 		for (size_t j = 0; j < s.data.size(); j++) {
 			printf("%s ", s.data[j].token.c_str());
@@ -143,16 +143,16 @@ again:
 		printf("\n");
 	}
 	std::map<std::string, booboo::Label>::iterator it2;
-	for (it2 = prg.labels.begin(); it2 != prg.labels.end(); it2++) {
+	for (it2 = prg->labels.begin(); it2 != prg->labels.end(); it2++) {
 		std::string label = (*it2).first;
 		printf("label %s %d\n", label.c_str(), (*it2).second.pc);
 	}
 	std::map<std::string, booboo::Program>::iterator it;
-	for (it = prg.functions.begin(); it != prg.functions.end(); it++) {
+	for (it = prg->functions.begin(); it != prg->functions.end(); it++) {
 		booboo::Program prg = (*it).second;
 		printf("%s:\n", (*it).first.c_str());
-		for (size_t i = 0; i < prg.program.size(); i++) {
-			booboo::Statement &s = prg.program[i];
+		for (size_t i = 0; i < prg->program.size(); i++) {
+			booboo::Statement &s = prg->program[i];
 			printf("%d ", s.method);
 			for (size_t j = 0; j < s.data.size(); j++) {
 				printf("%s ", s.data[j].token.c_str());
@@ -160,7 +160,7 @@ again:
 			printf("\n");
 		}
 		std::map<std::string, booboo::Label>::iterator it2;
-		for (it2 = prg.labels.begin(); it2 != prg.labels.end(); it2++) {
+		for (it2 = prg->labels.begin(); it2 != prg->labels.end(); it2++) {
 			std::string label = (*it2).first;
 			printf("label %s %d\n", label.c_str(), (*it2).second.pc);
 		}

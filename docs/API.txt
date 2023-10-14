@@ -1,8 +1,3 @@
-The Core Functions are the only things available if you don't use
-start_lib_basics or start_lib_game. BooBoo calls start_lib_basics and
-BooBooGame calls both, but if you use BooBoo as a library, it's up to
-you. The Core Functions are non-optional.
-
 -- Core Functions ------------------------------------------------------------
 
 number
@@ -166,6 +161,14 @@ sqrt
 	square root
 	e.g. sqrt x
 
+int
+	Drop the fractional part of a number
+	e.g. int x
+
+neg
+	Invert the sign of a number
+	e.g. neg x
+
 -- Vector Functions ----------------------------------------------------------
 
 vector_add
@@ -201,11 +204,3 @@ vector_clear
 print
 	print a string (like string_format)
 	e.g. print "Hello, I'm % and I like % and %" name like1 like2
-
-int
-	Drop the fractional part of a number
-	e.g. int x
-
-neg
-	Invert the sign of a number
-	e.g. neg x

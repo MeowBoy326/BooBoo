@@ -143,13 +143,13 @@ static std::string unescape_string(std::string s)
 	return ret;
 }
 
-static void skip_whitespace(Program &prg)
+static void skip_whitespace(Program *prg)
 {
-	while (prg.s->p < prg.s->code.length() && isspace(prg.s->code[prg.s->p])) {
-		if (prg.s->code[prg.s->p] == '\n') {
-			prg.s->line++;
+	while (prg->s->p < prg->s->code.length() && isspace(prg->s->code[prg->s->p])) {
+		if (prg->s->code[prg->s->p] == '\n') {
+			prg->s->line++;
 		}
-		prg.s->p++;
+		prg->s->p++;
 	}
 }
 
@@ -172,62 +172,62 @@ static std::string remove_quotes(std::string s)
 
 // And this all makes BooBoo work
 
-std::string get_file_name(Program &prg)
+std::string get_file_name(Program *prg)
 {
-	if (prg.line_numbers.size() <= prg.s->pc) {
+	if (prg->line_numbers.size() <= prg->s->pc) {
 		return "UNKNOWN";
 	}
 
-	int l = prg.line_numbers[prg.s->pc];
+	int l = prg->line_numbers[prg->s->pc];
 
-	if (prg.real_file_names.size() <= (unsigned int)l) {
+	if (prg->real_file_names.size() <= (unsigned int)l) {
 		return "UNKNOWN";
 	}
 
-	return prg.real_file_names[prg.line_numbers[prg.s->pc]];
+	return prg->real_file_names[prg->line_numbers[prg->s->pc]];
 }
 
-int get_line_num(Program &prg)
+int get_line_num(Program *prg)
 {
 	int l;
 
-	l = prg.s->pc;
+	l = prg->s->pc;
 
-	if (prg.line_numbers.size() <= (unsigned int)l) {
-		if (prg.line_numbers.size() > 0) {
-			return prg.line_numbers[prg.line_numbers.size()-1]+(prg.complete_pass == PASS2 ? prg.s->start_line : 0);
+	if (prg->line_numbers.size() <= (unsigned int)l) {
+		if (prg->line_numbers.size() > 0) {
+			return prg->line_numbers[prg->line_numbers.size()-1]+(prg->complete_pass == PASS2 ? prg->s->start_line : 0);
 		}
 		else {
 			return 1;
 		}
 	}
 
-	l = prg.line_numbers[l];
+	l = prg->line_numbers[l];
 
-	if (prg.real_line_numbers.size() <= (unsigned int)l) {
-		if (prg.real_line_numbers.size() > 0) {
-			return prg.real_line_numbers[prg.real_line_numbers.size()-1]+(prg.complete_pass == PASS2 ? prg.s->start_line : 0);
+	if (prg->real_line_numbers.size() <= (unsigned int)l) {
+		if (prg->real_line_numbers.size() > 0) {
+			return prg->real_line_numbers[prg->real_line_numbers.size()-1]+(prg->complete_pass == PASS2 ? prg->s->start_line : 0);
 		}
 		else {
 			return 1;
 		}
 	}
 
-	return prg.real_line_numbers[prg.line_numbers[prg.s->pc]]+(prg.complete_pass == PASS2 ? prg.s->start_line : 0);
+	return prg->real_line_numbers[prg->line_numbers[prg->s->pc]]+(prg->complete_pass == PASS2 ? prg->s->start_line : 0);
 }
 
-std::string get_error_info(Program &prg)
+std::string get_error_info(Program *prg)
 {
 	return get_file_name(prg) + ":" + itos(get_line_num(prg));
 }
 
-static std::string tokenfunc_label(booboo::Program &prg)
+static std::string tokenfunc_label(booboo::Program *prg)
 {
-	prg.s->p++;
+	prg->s->p++;
 	return ":";
 }
 
-static std::string tokenfunc_string(booboo::Program &prg)
+static std::string tokenfunc_string(booboo::Program *prg)
 {
 	char s[2];
 	s[1] = 0;
@@ -236,48 +236,104 @@ static std::string tokenfunc_string(booboo::Program &prg)
 	int prev_prev = -1;
 
 	std::string tok = "\"";
-	prg.s->p++;
+	prg->s->p++;
 
-	if (prg.s->p < prg.s->code.length()) {
-		while (prg.s->p < prg.s->code.length() && (prg.s->code[prg.s->p] != '"' || (prev == '\\' && prev_prev != '\\')) && prg.s->code[prg.s->p] != '\n') {
-			s[0] = prg.s->code[prg.s->p];
+	if (prg->s->p < prg->s->code.length()) {
+		while (prg->s->p < prg->s->code.length() && (prg->s->code[prg->s->p] != '"' || (prev == '\\' && prev_prev != '\\')) && prg->s->code[prg->s->p] != '\n') {
+			s[0] = prg->s->code[prg->s->p];
 			tok += s;
 			prev_prev = prev;
-			prev = prg.s->code[prg.s->p];
-			prg.s->p++;
+			prev = prg->s->code[prg->s->p];
+			prg->s->p++;
 		}
 
 		tok += "\"";
 
-		prg.s->p++;
+		prg->s->p++;
 	}
 
 	return tok;
 }
 
-static std::string tokenfunc_openbrace(booboo::Program &prg)
+static std::string tokenfunc_openbrace(booboo::Program *prg)
 {
-	prg.s->p++;
+	prg->s->p++;
 	return "{";
 }
 
-static std::string tokenfunc_closebrace(booboo::Program &prg)
+static std::string tokenfunc_closebrace(booboo::Program *prg)
 {
-	prg.s->p++;
+	prg->s->p++;
 	return "}";
 }
 
-static std::string tokenfunc_comment(booboo::Program &prg)
+static std::string tokenfunc_comment(booboo::Program *prg)
 {
-	prg.s->p++;
+	prg->s->p++;
 	return ";";
 }
 
-static std::string token(Program &prg, Token::Token_Type &ret_type)
+static std::string tokenfunc_add(booboo::Program *prg)
+{
+	prg->s->p++;
+	return "+";
+}
+
+static std::string tokenfunc_subtract(booboo::Program *prg)
+{
+	char s[2];
+	s[1] = 0;
+
+	prg->s->p++;
+	if (prg->s->p < prg->s->code.length() && isdigit(prg->s->code[prg->s->p])) {
+		std::string tok = "-";
+		while (prg->s->p < prg->s->code.length() && (isdigit(prg->s->code[prg->s->p]) || prg->s->code[prg->s->p] == '.')) {
+			s[0] = prg->s->code[prg->s->p];
+			tok += s;
+			prg->s->p++;
+		}
+		return tok;
+	}
+	else {
+		return "-";
+	}
+}
+
+static std::string tokenfunc_equals(booboo::Program *prg)
+{
+	prg->s->p++;
+	return "=";
+}
+
+static std::string tokenfunc_compare(booboo::Program *prg)
+{
+	prg->s->p++;
+	return "?";
+}
+
+static std::string tokenfunc_multiply(booboo::Program *prg)
+{
+	prg->s->p++;
+	return "*";
+}
+
+static std::string tokenfunc_divide(booboo::Program *prg)
+{
+	prg->s->p++;
+	return "/";
+}
+
+static std::string tokenfunc_modulus(booboo::Program *prg)
+{
+	prg->s->p++;
+	return "%";
+}
+
+static std::string token(Program *prg, Token::Token_Type &ret_type)
 {
 	skip_whitespace(prg);
 
-	if (prg.s->p >= prg.s->code.length()) {
+	if (prg->s->p >= prg->s->code.length()) {
 		return "";
 	}
 
@@ -285,20 +341,20 @@ static std::string token(Program &prg, Token::Token_Type &ret_type)
 	char s[2];
 	s[1] = 0;
 
-	if ((prg.s->p < prg.s->code.length()-1 && prg.s->code[prg.s->p] == '-' && isdigit(prg.s->code[prg.s->p+1])) || isdigit(prg.s->code[prg.s->p])) {
-		while (prg.s->p < prg.s->code.length() && (isdigit(prg.s->code[prg.s->p]) || prg.s->code[prg.s->p] == '.' || prg.s->code[prg.s->p] == '-')) {
-			s[0] = prg.s->code[prg.s->p];
+	if ((prg->s->p < prg->s->code.length()-1 && prg->s->code[prg->s->p] == '-' && isdigit(prg->s->code[prg->s->p+1])) || isdigit(prg->s->code[prg->s->p])) {
+		while (prg->s->p < prg->s->code.length() && (isdigit(prg->s->code[prg->s->p]) || prg->s->code[prg->s->p] == '.' || prg->s->code[prg->s->p] == '-')) {
+			s[0] = prg->s->code[prg->s->p];
 			tok += s;
-			prg.s->p++;
+			prg->s->p++;
 		}
 		ret_type = Token::NUMBER;
 		return tok;
 	}
-	else if (isalpha(prg.s->code[prg.s->p]) || prg.s->code[prg.s->p] == '_') {
-		while (prg.s->p < prg.s->code.length() && (isdigit(prg.s->code[prg.s->p]) || isalpha(prg.s->code[prg.s->p]) || prg.s->code[prg.s->p] == '_')) {
-			s[0] = prg.s->code[prg.s->p];
+	else if (isalpha(prg->s->code[prg->s->p]) || prg->s->code[prg->s->p] == '_') {
+		while (prg->s->p < prg->s->code.length() && (isdigit(prg->s->code[prg->s->p]) || isalpha(prg->s->code[prg->s->p]) || prg->s->code[prg->s->p] == '_')) {
+			s[0] = prg->s->code[prg->s->p];
 			tok += s;
-			prg.s->p++;
+			prg->s->p++;
 		}
 		ret_type = Token::SYMBOL;
 		return tok;
@@ -306,18 +362,18 @@ static std::string token(Program &prg, Token::Token_Type &ret_type)
 
 	ret_type = Token::STRING;
 
-	std::map<char, token_func>::iterator it = token_map.find(prg.s->code[prg.s->p]);
+	std::map<char, token_func>::iterator it = token_map.find(prg->s->code[prg->s->p]);
 	if (it != token_map.end()) {
 		return (*it).second(prg);
 	}
 
-	prg.line_numbers.push_back(prg.s->line); // can help give better line number
-	throw Error(std::string(__FUNCTION__) + ": " + "Parse error at " + get_error_info(prg) + " (pc=" + itos(prg.s->p) + ", tok=\"" + tok + "\")");
+	prg->line_numbers.push_back(prg->s->line); // can help give better line number
+	throw Error(std::string(__FUNCTION__) + ": " + "Parse error at " + get_error_info(prg) + " (pc=" + itos(prg->s->p) + ", tok=\"" + tok + "\")");
 
 	return "";
 }
 
-bool process_includes(Program &prg)
+bool process_includes(Program *prg)
 {
 	bool ret = false;
 
@@ -327,29 +383,29 @@ bool process_includes(Program &prg)
 
 	std::string tok;
 
-	prg.s->p = 0;
-	prg.s->line = 1;
-	prg.line_numbers.clear();
+	prg->s->p = 0;
+	prg->s->line = 1;
+	prg->line_numbers.clear();
 
-	int prev = prg.s->p;
+	int prev = prg->s->p;
 	int start = 0;
 
 	Token::Token_Type tt;
 
 	while ((tok = token(prg, tt)) != "") {
 		if (tok == ";") {
-			while (prg.s->p < prg.s->code.length() && prg.s->code[prg.s->p] != '\n') {
-				prg.s->p++;
+			while (prg->s->p < prg->s->code.length() && prg->s->code[prg->s->p] != '\n') {
+				prg->s->p++;
 			}
-			prg.s->line++;
-			if (prg.s->p < prg.s->code.length()) {
-				prg.s->p++;
+			prg->s->line++;
+			if (prg->s->p < prg->s->code.length()) {
+				prg->s->p++;
 			}
 		}
 		else if (tok == "include") {
 			std::string name = token(prg, tt);
 
-			int start_line = prg.s->line;
+			int start_line = prg->s->line;
 
 			if (name == "") {
 				throw Error(std::string(__FUNCTION__) + ": " + "Expected include parameters at " + get_error_info(prg));
@@ -361,7 +417,7 @@ bool process_includes(Program &prg)
 
 			name = remove_quotes(unescape_string(name));
 
-			code += prg.s->code.substr(start, prev-start);
+			code += prg->s->code.substr(start, prev-start);
 
 			std::string new_code;
 			std::string fn;
@@ -381,40 +437,40 @@ bool process_includes(Program &prg)
 
 			code += "\n" + new_code;
 			
-			prg.real_line_numbers[start_line-1+total_added] = 1;
-			prg.real_file_names[start_line-1+total_added] = fn;
+			prg->real_line_numbers[start_line-1+total_added] = 1;
+			prg->real_file_names[start_line-1+total_added] = fn;
 			for (int i = 1; i < nlines; i++) {
-				prg.real_line_numbers.insert(prg.real_line_numbers.begin()+start_line+(i-1+total_added), i+1);
-				prg.real_file_names.insert(prg.real_file_names.begin()+start_line+(i-1+total_added), fn);
+				prg->real_line_numbers.insert(prg->real_line_numbers.begin()+start_line+(i-1+total_added), i+1);
+				prg->real_file_names.insert(prg->real_file_names.begin()+start_line+(i-1+total_added), fn);
 			}
 
-			//for (int i = start_line+nlines; i < prg.real_line_numbers.size(); i++) {
-				//prg.real_line_numbers[i] += nlines-1;
+			//for (int i = start_line+nlines; i < prg->real_line_numbers.size(); i++) {
+				//prg->real_line_numbers[i] += nlines-1;
 			//}
 
-			start = prg.s->p;
+			start = prg->s->p;
 
 			total_added += nlines;
 
 			ret = true;
 		}
 
-		prev = prg.s->p;
+		prev = prg->s->p;
 	}
 
-	code += prg.s->code.substr(start, prg.s->code.length()-start);
+	code += prg->s->code.substr(start, prg->s->code.length()-start);
 
-	prg.s->code = code;
-	prg.s->p = 0;
-	prg.s->line = 1;
+	prg->s->code = code;
+	prg->s->p = 0;
+	prg->s->line = 1;
 
 	return ret;
 }
 
-static void compile(Program &prg, Pass pass)
+static void compile(Program *prg, Pass pass)
 {
-	int p_bak = prg.s->p;
-	int line_bak = prg.s->line;
+	int p_bak = prg->s->p;
+	int line_bak = prg->s->line;
 
 	std::string tok;
 	Token::Token_Type tt;
@@ -424,12 +480,12 @@ static void compile(Program &prg, Pass pass)
 
 	while ((tok = token(prg, tt)) != "") {
 		if (tok == ";") {
-			while (prg.s->p < prg.s->code.length() && prg.s->code[prg.s->p] != '\n') {
-				prg.s->p++;
+			while (prg->s->p < prg->s->code.length() && prg->s->code[prg->s->p] != '\n') {
+				prg->s->p++;
 			}
-			prg.s->line++;
-			if (prg.s->p < prg.s->code.length()) {
-				prg.s->p++;
+			prg->s->line++;
+			if (prg->s->p < prg->s->code.length()) {
+				prg->s->p++;
 			}
 		}
 		else if (tok == "function") {
@@ -439,34 +495,34 @@ static void compile(Program &prg, Pass pass)
 			v.name = func_name;
 			v.type = Variable::FUNCTION;
 			v.n = func_i++;
-			prg.variables_map[func_name] = var_i++;
+			prg->variables_map[func_name] = var_i++;
 			if (pass == PASS1) {
-				prg.variables.push_back(v);
+				prg->variables.push_back(v);
 			}
 
 			Program func;
 			func.s = new Function_Swap;
 			func.s->name = func_name;
 			func.s->pc = 0;
-			func.real_line_numbers = prg.real_line_numbers;
-			func.real_file_names = prg.real_file_names;
+			func.real_line_numbers = prg->real_line_numbers;
+			func.real_file_names = prg->real_file_names;
 			bool is_param = true;
 			bool finished = false;
 			std::map<std::string, int> backup;
 			//std::vector<std::string> new_vars;
 			while ((tok = token(prg, tt)) != "") {
 				if (tok == ";") {
-					while (prg.s->p < prg.s->code.length() && prg.s->code[prg.s->p] != '\n') {
-						prg.s->p++;
+					while (prg->s->p < prg->s->code.length() && prg->s->code[prg->s->p] != '\n') {
+						prg->s->p++;
 					}
-					prg.s->line++;
-					if (prg.s->p < prg.s->code.length()) {
-						prg.s->p++;
+					prg->s->line++;
+					if (prg->s->p < prg->s->code.length()) {
+						prg->s->p++;
 					}
 				}
 				else if (tok == "{") {
 					is_param = false;
-					func.s->start_line = prg.s->line;
+					func.s->start_line = prg->s->line;
 				}
 				else if (tok == "}") {
 					finished = true;
@@ -478,11 +534,11 @@ static void compile(Program &prg, Pass pass)
 					v.name = tok2;
 					v.type = Variable::LABEL;
 					v.n = func.s->program.size();
-					if (prg.variables_map.find(tok2) != prg.variables_map.end()) {
+					if (prg->variables_map.find(tok2) != prg->variables_map.end()) {
 						if (pass == PASS1) {
 							printf("duplicate label %s\n", tok2.c_str());
 						}
-						backup[tok2] = prg.variables_map[tok2];
+						backup[tok2] = prg->variables_map[tok2];
 					}
 					/*
 					else {
@@ -490,9 +546,9 @@ static void compile(Program &prg, Pass pass)
 					}
 					*/
 
-					prg.variables_map[tok2] = var_i++;
+					prg->variables_map[tok2] = var_i++;
 					if (pass == PASS1) {
-						prg.variables.push_back(v);
+						prg->variables.push_back(v);
 					}
 				}
 				else if (tok == "number" || tok == "string" || tok == "vector") {
@@ -504,18 +560,18 @@ static void compile(Program &prg, Pass pass)
 						if (func.line_numbers.size() != 0) {
 							func.s->pc++;
 						}
-						func.line_numbers.push_back(prg.s->line);
+						func.line_numbers.push_back(prg->s->line);
 					}
 					//if (std::find(new_vars.begin(), new_vars.end(), tok2) == new_vars.end()) {
-						if (prg.variables_map.find(tok2) != prg.variables_map.end()) {
-							backup[tok2] = prg.variables_map[tok2];
+						if (prg->variables_map.find(tok2) != prg->variables_map.end()) {
+							backup[tok2] = prg->variables_map[tok2];
 						}
 						/*
 						else {
 							new_vars.push_back(tok2);
 						}
 						*/
-						prg.variables_map[tok2] = var_i++;
+						prg->variables_map[tok2] = var_i++;
 						Variable v;
 						v.name = tok2;
 						if (tok == "number") {
@@ -528,12 +584,12 @@ static void compile(Program &prg, Pass pass)
 							v.type = Variable::VECTOR;
 						}
 						if (pass == PASS1) {
-							prg.variables.push_back(v);
+							prg->variables.push_back(v);
 						}
 					//}
 					Token t;
 					t.type = Token::SYMBOL;
-					t.i = prg.variables_map[tok2];
+					t.i = prg->variables_map[tok2];
 					t.s = tok2;
 					t.token = tok2;
 					func.s->program[func.s->program.size()-1].data.push_back(t);
@@ -546,12 +602,12 @@ static void compile(Program &prg, Pass pass)
 						if (func.line_numbers.size() != 0) {
 							func.s->pc++;
 						}
-						func.line_numbers.push_back(prg.s->line);
+						func.line_numbers.push_back(prg->s->line);
 					}
 				}
 				else if (is_param) {
-					if (prg.variables_map.find(tok) != prg.variables_map.end()) {
-						backup[tok] = prg.variables_map[tok];
+					if (prg->variables_map.find(tok) != prg->variables_map.end()) {
+						backup[tok] = prg->variables_map[tok];
 					}
 					/*
 					else {
@@ -559,18 +615,18 @@ static void compile(Program &prg, Pass pass)
 					}
 					*/
 					int param_i = var_i++;
-					prg.variables_map[tok] = param_i;
+					prg->variables_map[tok] = param_i;
 					Variable v;
 					v.name = tok;
 					if (pass == PASS1) {
-						prg.variables.push_back(v);
+						prg->variables.push_back(v);
 					}
 					func.params.push_back(param_i);
 				}
 				else {
 					if (func.s->program.size() == 0) {
-						func.line_numbers.push_back(prg.s->line); // can help give better line number
-						throw Error("Expected keyword at " + get_error_info(func));
+						func.line_numbers.push_back(prg->s->line); // can help give better line number
+						throw Error("Expected keyword at " + get_error_info(&func));
 					}
 					Token t;
 					t.token = tok;
@@ -581,12 +637,12 @@ static void compile(Program &prg, Pass pass)
 							break;
 						case Token::SYMBOL:
 							t.s = remove_quotes(unescape_string(tok));
-							if (pass == PASS2 && prg.variables_map.find(t.s) == prg.variables_map.end()) {
-								func.line_numbers.push_back(prg.s->line); // can help give better line number
-								throw Error(std::string(__FUNCTION__) + ": " + "Invalid variable name " + tok + " at " + get_error_info(func));
+							if (pass == PASS2 && prg->variables_map.find(t.s) == prg->variables_map.end()) {
+								func.line_numbers.push_back(prg->s->line); // can help give better line number
+								throw Error(std::string(__FUNCTION__) + ": " + "Invalid variable name " + tok + " at " + get_error_info(&func));
 							}
 							if (pass == PASS2) {
-								t.i = prg.variables_map[t.s];
+								t.i = prg->variables_map[t.s];
 							}
 							break;
 						case Token::NUMBER:
@@ -598,20 +654,20 @@ static void compile(Program &prg, Pass pass)
 			}
 
 			if (is_param == true) {
-				func.line_numbers.push_back(prg.s->line); // can help give better line number
-				throw Error(std::string(__FUNCTION__) + ": " + "Missing { at " + get_error_info(func));
+				func.line_numbers.push_back(prg->s->line); // can help give better line number
+				throw Error(std::string(__FUNCTION__) + ": " + "Missing { at " + get_error_info(&func));
 			}
 
 			if (finished == false) {
-				func.line_numbers.push_back(prg.s->line); // can help give better line number
-				throw Error(std::string(__FUNCTION__) + ": " + "Missing } at " + get_error_info(func));
+				func.line_numbers.push_back(prg->s->line); // can help give better line number
+				throw Error(std::string(__FUNCTION__) + ": " + "Missing } at " + get_error_info(&func));
 			}
 
-			prg.functions.push_back(func);
+			prg->functions.push_back(func);
 					
 			std::map<std::string, int>::iterator it;
 			for (it = backup.begin(); it != backup.end(); it++) {
-				prg.variables_map[(*it).first] = (*it).second;
+				prg->variables_map[(*it).first] = (*it).second;
 			}
 		}
 		else if (tok == ":") {
@@ -619,30 +675,30 @@ static void compile(Program &prg, Pass pass)
 			Variable v;
 			v.name = tok2;
 			v.type = Variable::LABEL;
-			v.n = prg.s->program.size();
-			if (prg.variables_map.find(tok2) != prg.variables_map.end()) {
+			v.n = prg->s->program.size();
+			if (prg->variables_map.find(tok2) != prg->variables_map.end()) {
 				if (pass == PASS1) {
 					printf("duplicate label %s\n", tok2.c_str());
 				}
 			}
 
-			prg.variables_map[tok2] = var_i++;
+			prg->variables_map[tok2] = var_i++;
 			if (pass == PASS1) {
-				prg.variables.push_back(v);
+				prg->variables.push_back(v);
 			}
 		}
 		else if (tok == "number" || tok == "string" || tok == "vector") {
 			std::string tok2 = token(prg, tt);
 			Statement s;
 			s.method = library_map[tok];
-			prg.s->program.push_back(s);
+			prg->s->program.push_back(s);
 			if (pass == PASS2) {
-				if (prg.line_numbers.size() != 0) {
-					prg.s->pc++;
+				if (prg->line_numbers.size() != 0) {
+					prg->s->pc++;
 				}
-				prg.line_numbers.push_back(prg.s->line);
+				prg->line_numbers.push_back(prg->s->line);
 			}
-			prg.variables_map[tok2] = var_i++;
+			prg->variables_map[tok2] = var_i++;
 			Variable v;
 			v.name = tok2;
 			if (tok == "number") {
@@ -655,28 +711,28 @@ static void compile(Program &prg, Pass pass)
 				v.type = Variable::VECTOR;
 			}
 			if (pass == PASS1) {
-				prg.variables.push_back(v);
+				prg->variables.push_back(v);
 			}
 			Token t;
 			t.type = Token::SYMBOL;
-			t.i = prg.variables_map[tok2];
+			t.i = prg->variables_map[tok2];
 			t.s = tok2;
 			t.token = tok2;
-			prg.s->program[prg.s->program.size()-1].data.push_back(t);
+			prg->s->program[prg->s->program.size()-1].data.push_back(t);
 		}
 		else if (library_map.find(tok) != library_map.end()) {
 			Statement s;
 			s.method = library_map[tok];
-			prg.s->program.push_back(s);
+			prg->s->program.push_back(s);
 			if (pass == PASS2) {
-				if (prg.line_numbers.size() != 0) {
-					prg.s->pc++;
+				if (prg->line_numbers.size() != 0) {
+					prg->s->pc++;
 				}
-				prg.line_numbers.push_back(prg.s->line);
+				prg->line_numbers.push_back(prg->s->line);
 			}
 		}
-		else if (prg.s->program.size() == 0) {
-			prg.line_numbers.push_back(prg.s->line); // can help give better line number
+		else if (prg->s->program.size() == 0) {
+			prg->line_numbers.push_back(prg->s->line); // can help give better line number
 			throw Error("Expected keyword at " + get_error_info(prg));
 		}
 		else {
@@ -689,30 +745,30 @@ static void compile(Program &prg, Pass pass)
 					break;
 				case Token::SYMBOL:
 					t.s = remove_quotes(unescape_string(tok));
-					if (pass == PASS2 && prg.variables_map.find(t.s) == prg.variables_map.end()) {
+					if (pass == PASS2 && prg->variables_map.find(t.s) == prg->variables_map.end()) {
 						throw Error(std::string(__FUNCTION__) + ": " + "Invalid variable name " + tok + " at " + get_error_info(prg));
 					}
 					if (pass == PASS2) {
-						t.i = prg.variables_map[t.s];
+						t.i = prg->variables_map[t.s];
 					}
 					break;
 				case Token::NUMBER:
 					t.n = atof(tok.c_str());
 					break;
 			}
-			prg.s->program[prg.s->program.size()-1].data.push_back(t);
+			prg->s->program[prg->s->program.size()-1].data.push_back(t);
 		}
 	}
 
-	prg.s->p = p_bak;
-	prg.s->line = line_bak;
+	prg->s->p = p_bak;
+	prg->s->line = line_bak;
 
-	prg.complete_pass = pass;
+	prg->complete_pass = pass;
 }
 
-void call_function(Program &prg, int function, std::vector<Token> &params, Variable &result, int ignore_params)
+void call_function(Program *prg, int function, std::vector<Token> &params, Variable &result, int ignore_params)
 {
-	Program &func = prg.functions[function];
+	Program &func = prg->functions[function];
 
 	for (size_t j = 0; j < func.params.size(); j++) {
 		Token param = params[j+ignore_params];
@@ -730,84 +786,85 @@ void call_function(Program &prg, int function, std::vector<Token> &params, Varia
 			var.name = param.token;
 		}
 		else {
-			Variable &v1 = prg.variables[param.i];
+			Variable &v1 = prg->variables[param.i];
 			var = v1;
 			//var.name = func.parameters[j];
 		}
 		
-		prg.variables[func.params[j]] = var;
+		prg->variables[func.params[j]] = var;
 	}
 
-	Function_Swap *bak2 = prg.s;
-	prg.s = func.s;
-	prg.s->p = 0;
-	prg.s->line = 1;
-	prg.s->pc = 0;
+	Function_Swap *bak2 = prg->s;
+	prg->s = func.s;
+	prg->s->p = 0;
+	prg->s->line = 1;
+	prg->s->pc = 0;
 
 	while (interpret(prg)) {
 	}
 
 	std::string bak = result.name;
-	result = prg.s->result;
+	result = prg->s->result;
 	result.name = bak;
 
-	prg.s = bak2;
+	prg->s = bak2;
 }
 
-void call_function(Program &prg, std::string function_name, std::vector<Token> &params, Variable &result, int ignore_params)
+void call_function(Program *prg, std::string function_name, std::vector<Token> &params, Variable &result, int ignore_params)
 {
-	for (size_t i = 0; i < prg.functions.size(); i++) {
-		if (prg.functions[i].s->name == function_name) {
+	for (size_t i = 0; i < prg->functions.size(); i++) {
+		if (prg->functions[i].s->name == function_name) {
 			call_function(prg, i, params, result, ignore_params);
 			return;
 		}
 	}
 }
 
-void call_void_function(Program &prg, int function, std::vector<Token> &params, int ignore_params)
+void call_void_function(Program *prg, int function, std::vector<Token> &params, int ignore_params)
 {
 	Variable tmp;
 	call_function(prg, function, params, tmp, ignore_params);
 }
 
-void call_void_function(Program &prg, std::string function_name, std::vector<Token> &params, int ignore_params)
+void call_void_function(Program *prg, std::string function_name, std::vector<Token> &params, int ignore_params)
 {
 	static Variable tmp;
 	call_function(prg, function_name, params, tmp, ignore_params);
 }
 
-bool interpret(Program &prg)
+bool interpret(Program *prg)
 {
 	bool ret = true;
 
-	if (prg.s->pc >= prg.s->program.size()) {
+	if (prg->s->pc >= prg->s->program.size()) {
 		return false;
 	}
 
-	Statement &s = prg.s->program[prg.s->pc];
+	Statement &s = prg->s->program[prg->s->pc];
 
-	unsigned int pc_bak = prg.s->pc;
+	unsigned int pc_bak = prg->s->pc;
 
 	library_func func = library[s.method];
 	ret = func(prg, s.data);
 
-	if (pc_bak == prg.s->pc) {
-		prg.s->pc++;
+	if (pc_bak == prg->s->pc) {
+		prg->s->pc++;
 	}
 
 	return ret;
 }
 
-void destroy_program(Program &prg)
+void destroy_program(Program *prg)
 {
-	prg.variables.clear();
-	prg.functions.clear();
+	prg->variables.clear();
+	prg->functions.clear();
 
-	for (size_t i = 0; i < prg.functions.size(); i++) {
-		delete prg.functions[i].s;
+	for (size_t i = 0; i < prg->functions.size(); i++) {
+		delete prg->functions[i].s;
 	}
-	delete prg.s;
-	prg.black_box.clear();
+	delete prg->s;
+	prg->black_box.clear();
+	delete prg;
 }
 
 void add_syntax(std::string name, library_func processing)
@@ -828,6 +885,14 @@ static void init_token_map()
 	add_token('{', tokenfunc_openbrace);
 	add_token('}', tokenfunc_closebrace);
 	add_token(';', tokenfunc_comment);
+	
+	add_token('+', tokenfunc_add);
+	add_token('-', tokenfunc_subtract);
+	add_token('=', tokenfunc_equals);
+	add_token('?', tokenfunc_compare);
+	add_token('*', tokenfunc_multiply);
+	add_token('/', tokenfunc_divide);
+	add_token('%', tokenfunc_modulus);
 }
 
 void start()
@@ -844,65 +909,65 @@ void end()
 	library_map.clear();
 }
 
-Program create_program(std::string code)
+Program *create_program(std::string code)
 {
-	Program prg;
+	Program *prg = new Program;
 
-	prg.s = new Function_Swap;
+	prg->s = new Function_Swap;
 
-	prg.real_line_numbers.push_back(1);
-	prg.real_file_names.push_back(main_program_name);
+	prg->real_line_numbers.push_back(1);
+	prg->real_file_names.push_back(main_program_name);
 	int i = 0;
 	int ln = 2;
 	while (code[i] != 0) {
 		if (code[i] == '\n') {
-			prg.real_line_numbers.push_back(ln++);
+			prg->real_line_numbers.push_back(ln++);
 		}
-		prg.real_file_names.push_back(main_program_name);
+		prg->real_file_names.push_back(main_program_name);
 		i++;
 	}
 
-	prg.s->code = code;
-	prg.s->name = "main";
-	prg.s->line = 1;
-	prg.line_numbers.clear();
-	prg.s->start_line = 0;
-	prg.s->p = 0;
-	prg.s->pc = 0;
-	prg.complete_pass = PASS0;
+	prg->s->code = code;
+	prg->s->name = "main";
+	prg->s->line = 1;
+	prg->line_numbers.clear();
+	prg->s->start_line = 0;
+	prg->s->p = 0;
+	prg->s->pc = 0;
+	prg->complete_pass = PASS0;
 	
 	while(process_includes(prg));
 
 #ifdef DEBUG_LINE_NUMBERS
 FILE *foo = fopen("debug_line_numbers.txt", "w");
-fprintf(foo, "%s", prg.s->code.c_str());
+fprintf(foo, "%s", prg->s->code.c_str());
 fprintf(foo, "---\n");
-for (size_t i = 0; i < prg.real_line_numbers.size(); i++) {
-	fprintf(foo, "%d\n", prg.real_line_numbers[i]);
+for (size_t i = 0; i < prg->real_line_numbers.size(); i++) {
+	fprintf(foo, "%d\n", prg->real_line_numbers[i]);
 }
 fclose(foo);
 #endif
 		
 	compile(prg, PASS1);
 
-	prg.s->p = 0;
-	prg.s->line = 1;
-	prg.s->start_line = 0;
-	prg.s->program.clear();
-	prg.functions.clear();
+	prg->s->p = 0;
+	prg->s->line = 1;
+	prg->s->start_line = 0;
+	prg->s->program.clear();
+	prg->functions.clear();
 
 	compile(prg, PASS2);
 
-	for (int i = 0; i < int(prg.variables.size())-1; i++) {
-		if (prg.variables[i].type != Variable::LABEL) {
+	for (int i = 0; i < int(prg->variables.size())-1; i++) {
+		if (prg->variables[i].type != Variable::LABEL) {
 			continue;
 		}
-		for (size_t j = i+1; j < prg.variables.size(); j++) {
-			if (prg.variables[j].type != Variable::LABEL) {
+		for (size_t j = i+1; j < prg->variables.size(); j++) {
+			if (prg->variables[j].type != Variable::LABEL) {
 				continue;
 			}
-			if (prg.variables[i].name == prg.variables[j].name) {
-				throw Error(std::string(__FUNCTION__) + ": " + "Duplicate labels \"" + prg.variables[i].name + "\"");
+			if (prg->variables[i].name == prg->variables[j].name) {
+				throw Error(std::string(__FUNCTION__) + ": " + "Duplicate labels \"" + prg->variables[i].name + "\"");
 			}
 		}
 	}
@@ -910,12 +975,12 @@ fclose(foo);
 #ifdef DEBUG_LINE_NUMBERS
 foo = fopen("debug_line_numbers.txt", "a");
 fprintf(foo, "---\n");
-for (size_t i = 0; i < prg.line_numbers.size(); i++) {
-	if (i >= prg.s->program.size()) {
+for (size_t i = 0; i < prg->line_numbers.size(); i++) {
+	if (i >= prg->s->program.size()) {
 		fprintf(foo, "-- line_numbers bigger than program --\n");
 		break;
 	}
-	Statement &s = prg.s->program[i];
+	Statement &s = prg->s->program[i];
 	std::map<std::string, int>::iterator it;
 	std::string op = "UNKNOWN";
 	for (it = library_map.begin(); it != library_map.end(); it++) {
@@ -924,16 +989,16 @@ for (size_t i = 0; i < prg.line_numbers.size(); i++) {
 			break;
 		}
 	}
-	fprintf(foo, "%d (%s)\n", prg.line_numbers[i], op.c_str());
+	fprintf(foo, "%d (%s)\n", prg->line_numbers[i], op.c_str());
 }
-for (size_t i = 0; i < prg.functions.size(); i++) {
-	fprintf(foo, "--- %s ---\n", prg.functions[i].name.c_str());
-	for (size_t j = 0; j < prg.functions[i].line_numbers.size(); j++) {
-		if (j >= prg.functions[i].program.size()) {
+for (size_t i = 0; i < prg->functions.size(); i++) {
+	fprintf(foo, "--- %s ---\n", prg->functions[i].name.c_str());
+	for (size_t j = 0; j < prg->functions[i].line_numbers.size(); j++) {
+		if (j >= prg->functions[i].program.size()) {
 			fprintf(foo, "-- line_numbers bigger than program --\n");
 			break;
 		}
-		Statement &s = prg.functions[i].program[j];
+		Statement &s = prg->functions[i].program[j];
 		std::map<std::string, int>::iterator it;
 		std::string op = "UNKNOWN";
 		for (it = library_map.begin(); it != library_map.end(); it++) {
@@ -942,16 +1007,16 @@ for (size_t i = 0; i < prg.functions.size(); i++) {
 				break;
 			}
 		}
-		fprintf(foo, "%d (%s)\n", prg.functions[i].line_numbers[j], op.c_str());
+		fprintf(foo, "%d (%s)\n", prg->functions[i].line_numbers[j], op.c_str());
 	}
 }
 fclose(foo);
 #endif
 
-	prg.s->p = 0;
-	prg.s->line = 1;
-	prg.s->start_line = 0;
-	prg.s->pc = 0;
+	prg->s->p = 0;
+	prg->s->line = 1;
+	prg->s->start_line = 0;
+	prg->s->pc = 0;
 
 	return prg;
 }
@@ -991,18 +1056,18 @@ std::vector<Variable> get_vector(Variable &v)
 	return v.v;
 }
 
-Variable &as_variable(Program &prg, Token &t)
+Variable &as_variable(Program *prg, Token &t)
 {
-	return prg.variables[t.i];
+	return prg->variables[t.i];
 }
 
-double as_number(Program &prg, Token &t)
+double as_number(Program *prg, Token &t)
 {
 	if (t.type == Token::NUMBER) {
 		return t.n;
 	}
 	else if (t.type == Token::SYMBOL) {
-		Variable &v = prg.variables[t.i];
+		Variable &v = prg->variables[t.i];
 		if (v.type == Variable::NUMBER) {
 			return v.n;
 		}
@@ -1015,7 +1080,7 @@ double as_number(Program &prg, Token &t)
 	}
 }
 
-std::string as_string(Program &prg, Token &t)
+std::string as_string(Program *prg, Token &t)
 {
 	if (t.type == Token::NUMBER) {
 		char buf[1000];
@@ -1023,7 +1088,7 @@ std::string as_string(Program &prg, Token &t)
 		return buf;
 	}
 	else if (t.type == Token::SYMBOL) {
-		Variable &v = prg.variables[t.i];
+		Variable &v = prg->variables[t.i];
 		if (v.type == Variable::STRING) {
 			return v.s;
 		}
@@ -1038,14 +1103,14 @@ std::string as_string(Program &prg, Token &t)
 	}
 }
 
-int as_label(Program &prg, Token &t)
+int as_label(Program *prg, Token &t)
 {
-	return prg.variables[t.i].n;
+	return prg->variables[t.i].n;
 }
 
-int as_function(Program &prg, Token &t)
+int as_function(Program *prg, Token &t)
 {
-	return prg.variables[t.i].n;
+	return prg->variables[t.i].n;
 }
 
 // Error class

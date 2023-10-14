@@ -5,6 +5,6 @@
 
 void start_lib_game();
 void end_lib_game();
-void game_lib_destroy_program(booboo::Program &prg);
+void game_lib_destroy_program(booboo::Program *prg);
 
 #endif // BOOBOO_GAME_LIB_H
