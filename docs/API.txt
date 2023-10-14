@@ -1,3 +1,6 @@
+The core functions are the only ones included if you use booboo::start_lib_core(). The rest
+are part of booboo::start_lib_basics().
+
 -- Core Functions ------------------------------------------------------------
 
 number
@@ -11,6 +14,83 @@ string
 vector
 	define a vector
 	e.g. vector x
+
+reset
+	load a different BooBoo script
+	e.g. reset "next_slide.boo"
+
+exit
+	Exit the app with a return code to the environment
+	e.g. exit 0
+
+return
+	Return a value from a function
+	e.g. return 1
+
+include
+	Include a BooBoo file at this point in the code
+	e.g. include "my_functions.inc"
+
+:
+	Define a label
+	e.g. :jump_here
+
+;
+	Define a comment
+	e.g. = x 1 ; assign 1 to x
+
+""
+	a string
+	e.g. = name "Pelvis Johnson"
+
+function
+	define a function
+	e.g. function foo param1 param2 { ... }
+
+-- Flow Control --------------------------------------------------------------
+
+goto
+	jump to a label
+	e.g. goto next_loop
+
+?
+	Comparison
+	e.g. ? x 1
+
+je
+	Jumps like this one are based on the last comparison. If it was equal, this
+	will jump, if not, it won't
+	e.g. je process_x_equals_1
+
+jne
+	Jump if not equal
+	e.g. jne process_x_not_1
+
+jl
+	Jump if less
+	e.g. jl my_label
+
+jle
+	Jump if less or equal
+	e.g. jle my_label
+
+jg
+	Jump if greater
+	e.g. jg my_label
+
+jge
+	Jump if greater or equal
+	e.g. jge my_label
+
+call
+	Call a function that doesn't return anything
+	e.g. call my_func param1 param2 param2
+
+call_result
+	Call a function that returns a value
+	e.g. call_result result my_func param1 param2
+
+-- Arithmetic ----------------------------------------------------------------
 
 =
 	assign
@@ -35,22 +115,6 @@ vector
 %
 	integer modulus
 	e.g. % index count
-
-print
-	print a string (like string_format)
-	e.g. print "Hello, I'm % and I like % and %" name like1 like2
-
-reset
-	load a different BooBoo script
-	e.g. reset "next_slide.boo"
-
-exit
-	Exit the app with a return code to the environment
-	e.g. exit 0
-
-return
-	Return a value from a function
-	e.g. return 1
 
 -- String Functions ------------------------------------------------------------
 
@@ -129,3 +193,17 @@ vector_erase
 vector_clear
 	empty a vector
 	e.g. vector_clear v
+
+-- Other ---------------------------------------------------------------------
+
+print
+	print a string (like string_format)
+	e.g. print "Hello, I'm % and I like % and %" name like1 like2
+
+int
+	Drop the fractional part of a number
+	e.g. int x
+
+neg
+	Invert the sign of a number
+	e.g. neg x
