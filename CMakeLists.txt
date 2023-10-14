@@ -32,7 +32,7 @@ set(GAME_LAUNCHER_SOURCES
 )
 
 set(CORE_LAUNCHER_SOURCES
-	src/core_launcher.cpp
+	src/launcher.cpp
 )
 
 if(WIN32)

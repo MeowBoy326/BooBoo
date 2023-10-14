@@ -834,6 +834,8 @@ void start()
 {
 	init_token_map();
 	
+	start_lib_core();
+	
 	return_code = 0;
 }
 

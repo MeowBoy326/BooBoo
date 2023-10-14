@@ -1,5 +1,7 @@
-The core functions are the only ones included if you use booboo::start_lib_core(). The rest
-are part of booboo::start_lib_basics(). The core lib is non-optional.
+The Core Functions are the only things available if you don't use
+start_lib_basics or start_lib_core. BooBoo calls start_lib_basics and
+BooBooGame calls both, but if you use BooBoo as a library, it's up to
+you.
 
 -- Core Functions ------------------------------------------------------------
 
