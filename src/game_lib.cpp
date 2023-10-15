@@ -1456,4 +1456,15 @@ void game_lib_destroy_program(Program *prg)
 	for (size_t i = 0; i < font_i->fonts.size(); i++) {
 		delete font_i->fonts[i];
 	}
+	CFG_Info *cfg_i = cfg_info(prg);
+
+	delete mml_i;
+	delete image_i;
+	delete font_i;
+	delete cfg_i;
+
+	booboo::set_black_box(prg, "mml", nullptr);
+	booboo::set_black_box(prg, "image", nullptr);
+	booboo::set_black_box(prg, "font", nullptr);
+	booboo::set_black_box(prg, "cfg", nullptr);
 }
