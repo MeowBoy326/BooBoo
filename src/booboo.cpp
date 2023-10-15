@@ -1113,6 +1113,24 @@ int as_function(Program *prg, Token &t)
 	return prg->variables[t.i].n;
 }
 
+void *get_black_box(Program *prg, std::string id)
+{
+	if (prg->black_box.find(id) == prg->black_box.end()) {
+		return nullptr;
+	}
+	return prg->black_box[id];
+}
+
+void set_black_box(Program *prg, std::string id, void *data)
+{
+	prg->black_box[id] = data;
+}
+
+Variable &get_variable(Program *prg, int index)
+{
+	return prg->variables[index];
+}
+
 // Error class
 
 Error::Error()

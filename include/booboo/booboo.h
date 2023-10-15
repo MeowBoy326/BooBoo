@@ -106,6 +106,11 @@ typedef std::string (*token_func)(Program *);
 
 void add_token(char token, token_func func);
 
+void *get_black_box(Program *prg, std::string id);
+void set_black_box(Program *prg, std::string id, void *data);
+
+Variable &get_variable(Program *prg, int index);
+
 } // End namespace booboo
 
 // You can use this at the start of your library functions to ensure correct number of arguments

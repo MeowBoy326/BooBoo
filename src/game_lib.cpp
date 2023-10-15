@@ -1,7 +1,6 @@
 #include <shim4/shim4.h>
 
 #include "booboo/booboo.h"
-#include "booboo/internal.h"
 
 using namespace booboo;
 
@@ -54,56 +53,44 @@ static std::string remove_quotes(std::string s)
 
 static MML_Info *mml_info(Program *prg)
 {
-	MML_Info *info;
-	if (prg->black_box.find("mml") == prg->black_box.end()) {
+	MML_Info *info = (MML_Info *)booboo::get_black_box(prg, "mml");
+	if (info == nullptr) {
 		info = new MML_Info;
 		info->mml_id = 0;
-		prg->black_box["mml"] = info;
-	}
-	else {
-		info = static_cast<MML_Info *>(prg->black_box["mml"]);
+		booboo::set_black_box(prg, "mml", info);
 	}
 	return info;
 }
 
 static Image_Info *image_info(Program *prg)
 {
-	Image_Info *info;
-	if (prg->black_box.find("image") == prg->black_box.end()) {
+	Image_Info *info = (Image_Info *)booboo::get_black_box(prg, "image");
+	if (info == nullptr) {
 		info = new Image_Info;
 		info->image_id = 0;
-		prg->black_box["image"] = info;
-	}
-	else {
-		info = static_cast<Image_Info *>(prg->black_box["image"]);
+		booboo::set_black_box(prg, "image", info);
 	}
 	return info;
 }
 
 static Font_Info *font_info(Program *prg)
 {
-	Font_Info *info;
-	if (prg->black_box.find("font") == prg->black_box.end()) {
+	Font_Info *info = (Font_Info *)booboo::get_black_box(prg, "font");
+	if (info == nullptr) {
 		info = new Font_Info;
 		info->font_id = 0;
-		prg->black_box["font"] = info;
-	}
-	else {
-		info = static_cast<Font_Info *>(prg->black_box["font"]);
+		booboo::set_black_box(prg, "font", info);
 	}
 	return info;
 }
 
 static CFG_Info *cfg_info(Program *prg)
 {
-	CFG_Info *info;
-	if (prg->black_box.find("cfg") == prg->black_box.end()) {
+	CFG_Info *info = (CFG_Info *)booboo::get_black_box(prg, "cfg");
+	if (info == nullptr) {
 		info = new CFG_Info;
 		info->cfg_id = 0;
-		prg->black_box["cfg"] = info;
-	}
-	else {
-		info = static_cast<CFG_Info *>(prg->black_box["cfg"]);
+		booboo::set_black_box(prg, "cfg", info);
 	}
 	return info;
 }
@@ -198,6 +185,36 @@ static bool save_cfg(Program *prg, int id, std::string cfg_name)
 	}
 
 	fclose(f);
+
+	return true;
+}
+
+static bool miscfunc_inspect(Program *prg, std::vector<Token> &v)
+{
+	COUNT_ARGS(1)
+
+	char buf[1000];
+
+	if (v[0].type == Token::NUMBER) {
+		snprintf(buf, 1000, "%g", v[0].n);
+	}
+	else if (v[0].type == Token::SYMBOL) {
+		Variable &var = get_variable(prg, v[0].i);
+		if (var.type == Variable::NUMBER) {
+			snprintf(buf, 1000, "%g", var.n);
+		}
+		else if (var.type == Variable::STRING) {
+			snprintf(buf, 1000, "%s", var.s.c_str());
+		}
+		else if (var.type == Variable::VECTOR) {
+			snprintf(buf, 1000, "-vector-");
+		}
+	}
+	else {
+		strcpy(buf, "Unknown");
+	}
+
+	gui::popup("INSPECTOR", buf, gui::OK);
 
 	return true;
 }
@@ -969,14 +986,14 @@ static bool fontfunc_height(Program *prg, std::vector<Token> &v)
 
 static void set_string_or_number(Program *prg, int index, double value)
 {
-	Variable &v1 = prg->variables[index];
+       Variable &v1 = booboo::get_variable(prg, index);
 
-	if (v1.type == Variable::NUMBER) {
-		v1.n = value;
-	}
-	else {
-		throw Error(std::string(__FUNCTION__) + ": " + "Invalid type at " + get_error_info(prg));
-	}
+       if (v1.type == Variable::NUMBER) {
+               v1.n = value;
+       }
+       else {
+               throw Error(std::string(__FUNCTION__) + ": " + "Invalid type at " + get_error_info(prg));
+       }
 }
 
 static bool joyfunc_poll(Program *prg, std::vector<Token> &v)
@@ -1182,36 +1199,6 @@ static bool joyfunc_count(Program *prg, std::vector<Token> &v)
 	return true;
 }
 
-static bool miscfunc_inspect(Program *prg, std::vector<Token> &v)
-{
-	COUNT_ARGS(1)
-
-	char buf[1000];
-
-	if (v[0].type == Token::NUMBER) {
-		snprintf(buf, 1000, "%g", v[0].n);
-	}
-	else if (v[0].type == Token::SYMBOL) {
-		Variable &var = prg->variables[v[0].i];
-		if (var.type == Variable::NUMBER) {
-			snprintf(buf, 1000, "%g", var.n);
-		}
-		else if (var.type == Variable::STRING) {
-			snprintf(buf, 1000, "%s", var.s.c_str());
-		}
-		else if (var.type == Variable::VECTOR) {
-			snprintf(buf, 1000, "-vector-");
-		}
-	}
-	else {
-		strcpy(buf, "Unknown");
-	}
-
-	gui::popup("INSPECTOR", buf, gui::OK);
-
-	return true;
-}
-
 static bool cfgfunc_load(Program *prg, std::vector<Token> &v)
 {
 	COUNT_ARGS(2)
@@ -1408,6 +1395,7 @@ static bool cfgfunc_exists(Program *prg, std::vector<Token> &v)
 
 void start_lib_game()
 {
+	add_syntax("inspect", miscfunc_inspect);
 	add_syntax("delay", miscfunc_delay);
 	add_syntax("get_ticks", miscfunc_get_ticks);
 	add_syntax("rand", miscfunc_rand);
@@ -1441,7 +1429,6 @@ void start_lib_game()
 	add_syntax("mml_stop", mmlfunc_stop);
 	add_syntax("joystick_poll", joyfunc_poll);
 	add_syntax("joystick_count", joyfunc_count);
-	add_syntax("inspect", miscfunc_inspect);
 	add_syntax("cfg_load", cfgfunc_load);
 	add_syntax("cfg_save", cfgfunc_save);
 	add_syntax("cfg_get_number", cfgfunc_get_number);
