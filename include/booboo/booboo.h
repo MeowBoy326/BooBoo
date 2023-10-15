@@ -54,11 +54,7 @@ struct Token {
 // These are for adding syntax
 typedef bool (*library_func)(Program *prg, std::vector<Token> &v);
 
-// This stuff can be used but it's used by the BooBoo interpreter
-extern std::string reset_game_name;
-extern std::string main_program_name;
-extern int return_code;
-extern bool quit;
+typedef std::string (*token_func)(Program *);
 
 // Call these before/after using BooBoo
 void start();
@@ -84,7 +80,11 @@ double get_number(Variable &v);
 std::string get_string(Variable &v);
 std::vector<Variable> get_vector(Variable &v);
 
+// Add a library function
 void add_syntax(std::string name, library_func func);
+void add_token(char token, token_func func);
+
+// For error handling
 int get_line_num(Program *prg);
 std::string get_file_name(Program *prg);
 std::string get_error_info(Program *prg);
@@ -96,20 +96,21 @@ std::string as_string(Program *prg, Token &t);
 int as_label(Program *prg, Token &t);
 int as_function(Program *prg, Token &t);
 
-// This adds only the core syntax (6 library functions and a few extra keywords)
-void start_lib_core();
-
 // This one adds basic syntax like arithmetic and vector manipulation
 void start_lib_basics();
 
-typedef std::string (*token_func)(Program *);
-
-void add_token(char token, token_func func);
-
+// The black box allows you to store anything you want
 void *get_black_box(Program *prg, std::string id);
 void set_black_box(Program *prg, std::string id, void *data);
 
+// If you have a variable of type SYMBOL then 'i' is the index you pass here to retrive the variable
 Variable &get_variable(Program *prg, int index);
+
+// This stuff can be used but it's used by the BooBoo interpreter
+extern std::string reset_game_name;
+extern std::string main_program_name;
+extern int return_code;
+extern bool quit;
 
 } // End namespace booboo
 

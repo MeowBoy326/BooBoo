@@ -58,6 +58,9 @@ struct Program {
 
 std::string itos(int i);
 
+// This automatically gets called when you call booboo::start
+void start_lib_core();
+
 } // End namespace booboo
 
 #endif // BOOBOO_INTERNAL_H
