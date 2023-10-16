@@ -998,7 +998,11 @@ function run
 	; Check if firing
 
 	? joy_x 0
-	je do_thrust
+	jne do_fire
+	? joy_b 0
+	jne do_fire
+	goto do_thrust
+:do_fire
 	? next_fire_ticks 5
 	jl do_thrust
 	= next_fire_ticks 0
